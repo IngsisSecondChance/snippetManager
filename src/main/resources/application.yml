@@ -1,0 +1,14 @@
+spring:
+  application:
+    name: snippet-manager
+  datasource:
+    url: jdbc:postgresql://localhost:5432/snippetdb
+    username: postgres
+    password: postgres
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate.format_sql: true
+server:
+  port: 8081
