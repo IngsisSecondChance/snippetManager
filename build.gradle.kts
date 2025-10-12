@@ -5,6 +5,8 @@ plugins {
 	jacoco
 	id("com.diffplug.spotless") version "6.25.0"
 	checkstyle
+	kotlin("jvm")
+	kotlin("plugin.spring") version "1.9.25"
 }
 
 group = "ingsis"
@@ -15,12 +17,26 @@ java {
 	toolchain { languageVersion = JavaLanguageVersion.of(17) }
 }
 
-repositories { mavenCentral() }
+repositories {
+	mavenCentral()
+}
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")        // Web clásico
+	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
+
+	// Comunicación entre microservicios
+	implementation("org.springframework.boot:spring-boot-starter-webflux")
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0")
+
+	// Redis
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+	// MapStruct
+	implementation("org.mapstruct:mapstruct:1.5.5.Final")
+	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+
 
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
@@ -31,18 +47,31 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter:1.20.1")
 	testImplementation("org.testcontainers:postgresql:1.20.1")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+	implementation(kotlin("stdlib-jdk8"))
 }
 
-tasks.withType<Test> { useJUnitPlatform() }
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
+	}
+}
 
-/* -------- Coverage (JaCoCo) -------- */
-jacoco { toolVersion = "0.8.12" }
+tasks.withType<Test> {
+	useJUnitPlatform()
+}
+
+jacoco {
+	toolVersion = "0.8.12"
+}
+
 tasks.jacocoTestReport {
 	dependsOn(tasks.test)
-	reports { xml.required.set(true); html.required.set(true) }
+	reports {
+		xml.required.set(true)
+		html.required.set(true)
+	}
 }
 
-/* -------- Formatter (Spotless) -------- */
 spotless {
 	java {
 		googleJavaFormat()
@@ -50,9 +79,15 @@ spotless {
 	}
 }
 
-/* -------- Linter (Checkstyle) -------- */
 checkstyle {
 	toolVersion = "10.18.1"
-	// Usá 'config' (no configFile) para evitar deprecations en Gradle modernos
 	config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
 }
+configurations.all {
+	resolutionStrategy.eachDependency {
+		if (requested.group == "ch.qos.logback") {
+			useVersion("1.5.11")
+		}
+	}
+}
+
