@@ -34,6 +34,10 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:postgresql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	implementation(kotlin("stdlib-jdk8"))
+	implementation("org.jetbrains.kotlin:kotlin-reflect") // 👈 necesaria en runtime
+
 }
 
 tasks.withType<Test> { useJUnitPlatform() }
