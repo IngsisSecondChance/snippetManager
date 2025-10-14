@@ -1,93 +1,69 @@
 plugins {
-	java
-	id("org.springframework.boot") version "3.5.6"
-	id("io.spring.dependency-management") version "1.1.7"
-	jacoco
-	id("com.diffplug.spotless") version "6.25.0"
-	checkstyle
-	kotlin("jvm")
-	kotlin("plugin.spring") version "1.9.25"
+    java
+    id("org.springframework.boot") version "3.2.10"
+    id("io.spring.dependency-management") version "1.1.7"
+    jacoco
+    id("com.diffplug.spotless") version "6.25.0"
+    checkstyle
 }
 
 group = "ingsis"
 version = "0.0.1-SNAPSHOT"
 description = "ingsis project for Spring Boot"
 
-java {
-	toolchain { languageVersion = JavaLanguageVersion.of(17) }
-}
+java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
 
-repositories {
-	mavenCentral()
-}
+repositories { mavenCentral() }
 
 dependencies {
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-	implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
 
-	// Comunicación entre microservicios
-	implementation("org.springframework.boot:spring-boot-starter-webflux")
-	implementation("org.springframework.cloud:spring-cloud-starter-openfeign:4.1.0")
+    // Spring Cloud dependencies
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
 
-	// Redis
-	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    compileOnly("org.projectlombok:lombok")
+    annotationProcessor("org.projectlombok:lombok")
 
-	// MapStruct
-	implementation("org.mapstruct:mapstruct:1.5.5.Final")
-	annotationProcessor("org.mapstruct:mapstruct-processor:1.5.5.Final")
+    runtimeOnly("org.postgresql:postgresql")
 
-
-	compileOnly("org.projectlombok:lombok")
-	annotationProcessor("org.projectlombok:lombok")
-
-	runtimeOnly("org.postgresql:postgresql")
-
-	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.testcontainers:junit-jupiter:1.20.1")
-	testImplementation("org.testcontainers:postgresql:1.20.1")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	implementation(kotlin("stdlib-jdk8"))
+    // Test dependencies
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(platform("org.testcontainers:testcontainers-bom:1.20.1"))
+    testImplementation("org.testcontainers:testcontainers")
+    testImplementation("org.testcontainers:junit-jupiter")
+    testImplementation("org.testcontainers:postgresql")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 dependencyManagement {
-	imports {
-		mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
-	}
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
+    }
 }
 
 tasks.withType<Test> {
-	useJUnitPlatform()
+    useJUnitPlatform()
 }
 
-jacoco {
-	toolVersion = "0.8.12"
-}
+jacoco { toolVersion = "0.8.12" }
 
 tasks.jacocoTestReport {
-	dependsOn(tasks.test)
-	reports {
-		xml.required.set(true)
-		html.required.set(true)
-	}
+    dependsOn(tasks.test)
+    reports { xml.required.set(true); html.required.set(true) }
 }
 
 spotless {
-	java {
-		googleJavaFormat()
-		target("src/**/*.java")
-	}
+    java {
+        googleJavaFormat()
+        target("src/**/*.java")
+    }
 }
 
 checkstyle {
-	toolVersion = "10.18.1"
-	config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
+    toolVersion = "10.18.1"
+    config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
 }
-configurations.all {
-	resolutionStrategy.eachDependency {
-		if (requested.group == "ch.qos.logback") {
-			useVersion("1.5.11")
-		}
-	}
-}
-
