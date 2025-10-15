@@ -40,8 +40,12 @@ public class SnippetDTO {
 
   @Override
   public boolean equals(Object o) {
-    if (this == o) return true;
-    if (!(o instanceof SnippetDTO)) return false;
+    if (this == o) {
+      return true;
+    }
+    if (!(o instanceof SnippetDTO)) {
+      return false;
+    }
     SnippetDTO that = (SnippetDTO) o;
     return Objects.equals(id, that.id)
         && Objects.equals(name, that.name)
