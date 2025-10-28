@@ -17,14 +17,16 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: https://${AUTH_SERVER_URI}/
+          issuer-uri: ${auth0.issuer}
 
 server:
   port: 8081
 
+# ===== Auth0 =====
 auth0:
-  issuer: https://${AUTH_SERVER_URI}/
-  audience: ${AUTH0_AUDIENCE}               # ej: https://snippet-api
+  # usa valores de entorno si existen, o defaults seguros si no (para CI/tests)
+  issuer: https://${AUTH_SERVER_URI:dev-local.us.auth0.com}/
+  audience: ${AUTH0_AUDIENCE:https://snippet-api}
 
 # ===== Actuator =====
 management:
