@@ -34,4 +34,9 @@ public class SnippetController {
       return ResponseEntity.internalServerError().body("Error interno: " + e.getMessage());
     }
   }
+
+  @GetMapping("/ping")
+  public ResponseEntity<String> ping() {
+    return ResponseEntity.ok("pong 🟢");
+  }
 }
