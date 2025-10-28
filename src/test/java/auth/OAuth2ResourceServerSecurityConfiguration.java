@@ -35,52 +35,31 @@ public class OAuth2ResourceServerSecurityConfiguration {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(
-            authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers("/")
+    http.csrf(AbstractHttpConfigurer::disable)
+        .cors(withDefaults())
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(
+                        "/",
+                        "/actuator/**",
+                        "/swagger-ui",
+                        "/swagger-ui/*",
+                        "/v3/api-docs",
+                        "/v3/api-docs/*")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/snippet")
+                    .requestMatchers(HttpMethod.GET, "/snippets/**")
                     .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.GET, "/snippet/*")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.POST, "/snippet")
+                    .requestMatchers(HttpMethod.POST, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.DELETE, "/snippet/*")
+                    .requestMatchers(HttpMethod.DELETE, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.PUT, "/format")
+                    .requestMatchers(HttpMethod.PUT, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.GET, "/format")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.PUT, "/lint")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.GET, "/lint")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.GET, "/test/*")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.GET, "/test")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.POST, "/test/*")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.POST, "/test")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.DELETE, "/test/*")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.DELETE, "/test")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.GET, "/swagger-ui")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/swagger-ui/*")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v3/api-docs")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v3/api-docs/*")
-                    .permitAll()
                     .anyRequest()
                     .authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-        .cors(withDefaults())
-        .csrf(AbstractHttpConfigurer::disable);
+        .oauth2ResourceServer(
+            oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(new JwtAuthConverter())));
+
     return http.build();
   }
 
@@ -97,18 +76,18 @@ public class OAuth2ResourceServerSecurityConfiguration {
 
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration configuration = new CorsConfiguration();
-    configuration.setAllowedOrigins(
+    CorsConfiguration cfg = new CorsConfiguration();
+    cfg.setAllowedOrigins(
         List.of(
             "http://localhost:5173",
             "https://snippet-dev.westus2.cloudapp.azure.com",
             "https://snippet-searcher.brazilsouth.cloudapp.azure.com"));
-    configuration.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
-    configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-    configuration.setAllowCredentials(true);
+    cfg.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
+    cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+    cfg.setAllowCredentials(true);
 
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/**", configuration);
-    return source;
+    UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
+    src.registerCorsConfiguration("/**", cfg);
+    return src;
   }
 }

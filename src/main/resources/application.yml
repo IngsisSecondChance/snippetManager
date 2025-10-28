@@ -1,14 +1,49 @@
 spring:
   application:
     name: snippet-manager
+
   datasource:
     url: jdbc:postgresql://localhost:5432/snippetdb
     username: postgres
     password: postgres
+
   jpa:
     hibernate:
       ddl-auto: update
     properties:
       hibernate.format_sql: true
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: https://${AUTH_SERVER_URI}/
+
 server:
   port: 8081
+
+auth0:
+  issuer: https://${AUTH_SERVER_URI}/
+  audience: ${AUTH0_AUDIENCE}               # ej: https://snippet-api
+
+# ===== Actuator =====
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings
+  endpoint:
+    health:
+      show-details: always
+
+# ===== Perfil Docker =====
+---
+spring:
+  config:
+    activate:
+      on-profile: docker
+
+  datasource:
+    url: jdbc:postgresql://postgres:5432/snippetdb
+    username: postgres
+    password: postgres
