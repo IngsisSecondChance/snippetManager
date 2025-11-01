@@ -3,4 +3,4 @@ pluginManagement {
         kotlin("jvm") version "1.9.24"
     }
 }
-rootProject.name = "snippetManager"
+rootProject.name = "snippet-manager"
