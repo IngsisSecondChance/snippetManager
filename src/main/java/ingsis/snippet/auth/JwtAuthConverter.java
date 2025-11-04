@@ -1,5 +1,5 @@
 // src/main/java/auth/JwtAuthConverter.java
-package auth;
+package ingsis.snippet.auth;
 
 import java.util.Collection;
 import org.springframework.core.convert.converter.Converter;
