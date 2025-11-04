@@ -1,4 +1,4 @@
-package auth;
+package ingsis.snippet.auth;
 
 import static org.springframework.security.config.Customizer.withDefaults;
 
