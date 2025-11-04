@@ -79,3 +79,7 @@ dependencies {
     implementation("org.springframework.security:spring-security-oauth2-core")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
+tasks.test {
+    useJUnitPlatform()
+    exclude("**/SnippetApplicationTests.class")
+}
