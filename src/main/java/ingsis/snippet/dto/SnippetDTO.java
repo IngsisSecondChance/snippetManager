@@ -2,81 +2,47 @@ package ingsis.snippet.dto;
 
 import java.util.Objects;
 
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+
+@Getter
+@Setter
+@NoArgsConstructor
 public class SnippetDTO {
 
-  private final String id;
-  private final String name;
-  private final String description;
-  private final String language;
-  private final String version;
+  @NotBlank(message = "Title is required")
+  private String title;
 
-  public SnippetDTO(String id, String name, String description, String language, String version) {
-    this.id = id;
-    this.name = name;
+  private String description;
+
+  @NotBlank(message = "Language is required")
+  private String language;
+
+  @NotBlank(message = "Extension is required")
+  private String extension;
+
+  @NotBlank(message = "Code is required")
+  private String code;
+
+  public SnippetDTO(String code, String title, String description, String language, String extension) {
+    this.title = title;
     this.description = description;
     this.language = language;
-    this.version = version;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public String getLanguage() {
-    return language;
-  }
-
-  public String getVersion() {
-    return version;
+    this.extension = extension;
+    this.code = code;
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (this == o) {
+  public boolean equals(Object obj) {
+    if (this == obj) {
       return true;
     }
-    if (!(o instanceof SnippetDTO)) {
+    if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    SnippetDTO that = (SnippetDTO) o;
-    return Objects.equals(id, that.id)
-        && Objects.equals(name, that.name)
-        && Objects.equals(description, that.description)
-        && Objects.equals(language, that.language)
-        && Objects.equals(version, that.version);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(id, name, description, language, version);
-  }
-
-  @Override
-  public String toString() {
-    return "SnippetDTO{"
-        + "id='"
-        + id
-        + '\''
-        + ", name='"
-        + name
-        + '\''
-        + ", description='"
-        + description
-        + '\''
-        + ", language='"
-        + language
-        + '\''
-        + ", version='"
-        + version
-        + '\''
-        + '}';
+    SnippetDTO snippetDTO = (SnippetDTO) obj;
+    return Objects.equals(title, snippetDTO.title) && Objects.equals(description, snippetDTO.description)
+            && Objects.equals(language, snippetDTO.language) && Objects.equals(extension, snippetDTO.extension)
+            && Objects.equals(code, snippetDTO.code);
   }
 }
