@@ -1,8 +1,10 @@
 package ingsis.snippet.web;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import static com.printScript.snippetService.web.RequestExecutor.*;
+
+import java.util.List;
+import java.util.Map;
+
 import ingsis.snippet.dto.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.printScript.snippetService.DTO.*;
+import com.printScript.snippetService.errorDTO.Error;
+import ingsis.snippet.services.RestTemplateService;
 
 @Component
 public class PermissionsManagerHandler {
@@ -67,7 +71,7 @@ public class PermissionsManagerHandler {
     public Response<String> shareSnippet(String token, ShareSnippetDTO shareSnippetDTO, String path) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
-        HttpEntity<ShareSnippetDTO> requestPermissions = new HttpEntity<>(shareSnippetDTO, headers);
+        HttpEntity<Object> requestPermissions = new HttpEntity<>(shareSnippetDTO, headers);
         try {
             postRequest(permissionsWebClient, path, requestPermissions, Void.class);
             return Response.withData(null);
@@ -88,7 +92,7 @@ public class PermissionsManagerHandler {
             return Response.withData(snippetIds);
         } catch (HttpClientErrorException e) {
             return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return Response.withError(new Error<>(400, "Error parsing response"));
         }
     }
@@ -104,7 +108,7 @@ public class PermissionsManagerHandler {
             return Response.withData(paginatedUsers);
         } catch (HttpClientErrorException e) {
             return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return Response.withError(new Error<>(400, "Error parsing response"));
         }
     }
@@ -134,7 +138,7 @@ public class PermissionsManagerHandler {
             return Response.withData(snippetIds);
         } catch (HttpClientErrorException e) {
             return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-        } catch (JsonProcessingException e) {
+        } catch (Exception e) {
             return Response.withError(new Error<>(400, "Failed to get snippets"));
         }
     }

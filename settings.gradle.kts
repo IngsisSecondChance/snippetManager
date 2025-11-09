@@ -4,4 +4,3 @@ pluginManagement {
     }
 }
 rootProject.name = "snippet-manager"
-//configuar con maven

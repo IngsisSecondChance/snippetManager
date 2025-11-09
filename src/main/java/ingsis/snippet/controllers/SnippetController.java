@@ -2,6 +2,7 @@ package ingsis.snippet.controllers;
 
 //import static ingsis.snippet.utils.Utils.checkMediaType;
 
+import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.dto.SnippetDTO;
 //import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.dto.Response;
@@ -21,7 +22,7 @@ public class SnippetController {
   public SnippetController(SnippetService snippetService) {
     this.snippetService = snippetService;
   }
-  /*
+
   // === NUEVO: Guardar snippet (JSON) ===
   @PostMapping("/save")
   public ResponseEntity<Object> saveSnippet(
@@ -38,7 +39,7 @@ public class SnippetController {
     return ResponseEntity.ok(response.getData());
   }
 
-
+/*
   // === NUEVO: Guardar snippet desde archivo ===
   @PostMapping("/save/file")
   public ResponseEntity<Object> saveSnippetFile(

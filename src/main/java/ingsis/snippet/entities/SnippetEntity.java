@@ -23,9 +23,6 @@ public class SnippetEntity {
   @Column(columnDefinition = "TEXT")
   private String code;
 
-  public SnippetEntity() {
-    // Constructor vacío requerido por JPA
-  }
 
   public SnippetEntity(
       String id, String name, String description, String language, String version, String code) {
@@ -35,6 +32,10 @@ public class SnippetEntity {
     this.language = language;
     this.version = version;
     this.code = code;
+  }
+
+  public SnippetEntity() {
+    // Constructor vacío requerido por JPA
   }
 
   // Getters y setters
