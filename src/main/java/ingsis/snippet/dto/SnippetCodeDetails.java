@@ -1,3 +1,4 @@
+/*
 package ingsis.snippet.dto;
 import com.printScript.snippetService.entities.Snippet;
 
@@ -20,3 +21,5 @@ public class SnippetCodeDetails {
     private String code;
     private Snippet.Status lintStatus;
 }
+
+ */
