@@ -56,10 +56,14 @@ jobs:
           ssh-private-key: ${{ env.SSH_KEY }}
 
       - name: Deploy to Azure VM
-        run: |
-          ssh -v -o StrictHostKeyChecking=no ingsis@${{ env.VM_IP }} << 'ENDSSH'
-          cd infra
-          docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} down snippet-manager
-          docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull snippet-manager
-          docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d snippet-manager
-          ENDSSH
+          run: |
+            ssh -v -o StrictHostKeyChecking=no ingsis@${{ env.VM_IP }} << 'ENDSSH'
+
+            cd infra
+
+            # Usamos sh -c y sudo para asegurar que la sintaxis V2 se ejecute correctamente
+            sh -c 'sudo docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} down snippet-manager'
+            sh -c 'sudo docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull snippet-manager'
+            sh -c 'sudo docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d snippet-manager'
+
+            ENDSSH
