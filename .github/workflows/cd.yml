@@ -59,7 +59,7 @@ jobs:
         run: |
           ssh -v -o StrictHostKeyChecking=no ingsis@${{ env.VM_IP }} << 'ENDSSH'
           cd infra
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} down snippet-manager
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull snippet-manager
-          docker-compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d snippet-manager
+          sudo docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} down snippet-manager
+          sudo docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} pull snippet-manager
+          sudo docker compose -f ${{ env.DOCKER_COMPOSE_FILE }} up -d snippet-manager
           ENDSSH
