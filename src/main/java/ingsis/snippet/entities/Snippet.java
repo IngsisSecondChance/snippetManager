@@ -36,10 +36,9 @@ public class Snippet {
     @Enumerated(EnumType.STRING)
     private Status formatStatus;
 
-    /*
     @OneToMany(mappedBy = "snippet", cascade = CascadeType.ALL)
     private List<Test> tests;
-||||*/
+
     public enum Status {
         IN_PROGRESS, COMPLIANT, NON_COMPLIANT, UNKNOWN
     }
