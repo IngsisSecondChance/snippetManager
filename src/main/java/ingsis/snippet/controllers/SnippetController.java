@@ -4,6 +4,9 @@ import static ingsis.snippet.utils.Utils.checkMediaType;
 
 import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.dto.SnippetDTO;
+import ingsis.snippet.dto.UpdateSnippetDTO;
+import ingsis.snippet.dto.Tuple;
+import com.printScript.snippetService.DTO.ShareSnippetDTO;
 //import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.exceptions.InvalidSnippetException;
@@ -89,6 +92,37 @@ public class SnippetController {
       return ResponseEntity.internalServerError().body("Error interno: " + e.getMessage());
     }
   }
+
+  @PostMapping("/update")
+  public ResponseEntity<Object> updateSnippet(@RequestBody UpdateSnippetDTO updateSnippetDTO,
+      @RequestHeader("Authorization") String token) {
+      Response<SnippetCodeDetails> response = snippetService.updateSnippet(updateSnippetDTO, token);
+        if (response.isError()) {
+          return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok(response.getData());
+  }
+
+  @GetMapping("/download")
+  public ResponseEntity<Object> downloadSnippet(@RequestParam String snippetId,
+        @RequestHeader("Authorization") String token) {
+        Response<SnippetService.Tuple> response = snippetService.downloadSnippet(snippetId, token);
+        if (response.isError()) {
+            return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok().header("Content-Disposition", "attachment; filename=" + response.getData().name())
+                .body(response.getData().code());
+    }
+
+  @PostMapping("/share")
+    public ResponseEntity<Object> shareSnippet(@RequestBody ShareSnippetDTO shareSnippetDTO,
+            @RequestHeader("Authorization") String token) {
+        Response<SnippetCodeDetails> response = snippetService.shareSnippet(shareSnippetDTO, token);
+        if (response.isError()) {
+            return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok(response.getData());
+    }
 
   @GetMapping("/ping")
   public ResponseEntity<String> ping() {
