@@ -42,7 +42,7 @@ jobs:
 
     env:
       SSH_KEY: ${{ github.ref_name == 'main' && secrets.SSH_KEY_PROD || secrets.SSH_KEY_DEV }}
-      VM_NAME: ${{ github.ref_name == 'main' && vm-prod || vm-dev }}
+      VM_NAME: ${{ github.ref_name == 'main' && 'vm-prod' || 'vm-dev' }}
       AZURE_RG: ${{ github.ref_name == 'main' && secrets.AZURE_RG_PROD || secrets.AZURE_RG_DEV }}
 
     steps:
