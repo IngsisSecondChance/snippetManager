@@ -1,6 +1,6 @@
 package ingsis.snippet.controllers;
 
-//import static ingsis.snippet.utils.Utils.checkMediaType;
+import static ingsis.snippet.utils.Utils.checkMediaType;
 
 import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.dto.SnippetDTO;
@@ -39,7 +39,7 @@ public class SnippetController {
     return ResponseEntity.ok(response.getData());
   }
 
-/*
+
   // === NUEVO: Guardar snippet desde archivo ===
   @PostMapping("/save/file")
   public ResponseEntity<Object> saveSnippetFile(
@@ -50,7 +50,7 @@ public class SnippetController {
           @RequestParam String version,
           @RequestHeader("Authorization") String token) {
 
-    ResponseEntity<Object> mediaTypeCheck = checkMediaType(file.getContentType());
+    ResponseEntity<Object> mediaTypeCheck = ingsis.snippet.utils.Utils.checkMediaType(file.getContentType());
     if (mediaTypeCheck != null) {
       return mediaTypeCheck;
     }
@@ -89,7 +89,7 @@ public class SnippetController {
       return ResponseEntity.internalServerError().body("Error interno: " + e.getMessage());
     }
   }
-*/
+
   @GetMapping("/ping")
   public ResponseEntity<String> ping() {
     return ResponseEntity.ok("pong 🟢");

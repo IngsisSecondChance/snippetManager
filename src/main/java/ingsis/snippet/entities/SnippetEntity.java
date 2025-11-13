@@ -22,7 +22,7 @@ public class SnippetEntity {
 
   @Column(columnDefinition = "TEXT")
   private String code;
-
+  
 
   public SnippetEntity(
       String id, String name, String description, String language, String version, String code) {

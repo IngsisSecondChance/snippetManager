@@ -3,6 +3,9 @@ package ingsis.snippet.web;
 import java.util.List;
 
 import ingsis.snippet.dto.TestData;
+import ingsis.snippet.dto.ValidationRequest;
+import ingsis.snippet.dto.LintRequest;
+import ingsis.snippet.dto.TestDataRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -74,11 +77,11 @@ public class PrintScriptServiceHandler {
     }
 
     public Response<Void> executeTest(String snippetId, String version, List<String> inputs, List<String> expected,
-                                      String token) {
+                      String token) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", token);
-        HttpEntity<TestData> requestPrintScript = new HttpEntity<>(new TestDataRequest(snippetId, version, inputs, expected),
-                headers);
+    HttpEntity<TestDataRequest> requestPrintScript = new HttpEntity<>(new TestDataRequest(snippetId, version, inputs, expected),
+        headers);
         try {
             printScriptWebClient.postForEntity("/runner/test", requestPrintScript, Void.class);
             return Response.withData(null);

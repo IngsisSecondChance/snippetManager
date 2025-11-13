@@ -40,7 +40,8 @@ public class OAuth2ResourceServerSecurityConfiguration {
         .authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
-                        "/",
+                        "/**",
+                        "/ping",
                         "/actuator/**",
                         "/swagger-ui",
                         "/swagger-ui/*",

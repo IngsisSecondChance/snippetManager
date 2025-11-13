@@ -25,6 +25,7 @@ services:
       # ===== Auth0 =====
       AUTH_SERVER_URI: ${AUTH_SERVER_URI}
       AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
+      AUTH0_ISSUER: ${AUTH0_ISSUER} 
     depends_on:
       postgres:
         condition: service_healthy

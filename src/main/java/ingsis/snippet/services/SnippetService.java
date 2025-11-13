@@ -3,6 +3,7 @@ package ingsis.snippet.services;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.dto.SnippetDTO;
+import ingsis.snippet.dto.Validation;
 import ingsis.snippet.entities.SnippetEntity;
 import ingsis.snippet.errorDTO.Error;
 import java.util.Set;
@@ -18,6 +19,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.interceptor.TransactionAspectSupport;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static ingsis.snippet.utils.Utils.getViolationsMessageError;
 
@@ -96,5 +101,30 @@ public class SnippetService {
             extension, code));
   }
 
+  // Crea un SnippetDTO a partir de un archivo; lanza InvalidSnippetException si es inválido
+  public SnippetDTO createSnippetFromFile(MultipartFile file, String name, String description, String language, String version) {
+    // Comprueba tipo de media
+    var mediaCheck = ingsis.snippet.utils.Utils.checkMediaType(file.getContentType());
+    if (mediaCheck != null) {
+      throw new ingsis.snippet.exceptions.InvalidSnippetException(new Validation("Unsupported file type", version));
+    }
+
+    try {
+      String code = new String(file.getBytes(), StandardCharsets.UTF_8);
+      SnippetDTO snippetDTO = new SnippetDTO(code, name, description, language, version);
+      Set<ConstraintViolation<SnippetDTO>> violations = validation.validate(snippetDTO);
+      if (!violations.isEmpty()) {
+        StringBuilder sb = new StringBuilder();
+        for (ConstraintViolation<SnippetDTO> v : violations) {
+          if (sb.length() > 0) sb.append("; ");
+          sb.append(v.getPropertyPath()).append(": ").append(v.getMessage());
+        }
+        throw new ingsis.snippet.exceptions.InvalidSnippetException(new Validation(sb.toString(), version));
+      }
+      return snippetDTO;
+    } catch (IOException e) {
+      throw new ingsis.snippet.exceptions.InvalidSnippetException(new Validation("Unable to read file: " + e.getMessage(), version));
+    }
+  }
 
 }

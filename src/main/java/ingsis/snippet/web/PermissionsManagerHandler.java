@@ -1,14 +1,14 @@
 package ingsis.snippet.web;
 
-import static com.printScript.snippetService.web.RequestExecutor.*;
-
 import java.util.List;
 import java.util.Map;
 
+import ingsis.snippet.dto.PaginatedUsers;
 import ingsis.snippet.dto.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.printScript.snippetService.DTO.*;
-import com.printScript.snippetService.errorDTO.Error;
+import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.services.RestTemplateService;
 
 @Component
@@ -141,5 +141,19 @@ public class PermissionsManagerHandler {
         } catch (Exception e) {
             return Response.withError(new Error<>(400, "Failed to get snippets"));
         }
+    }
+
+    // Implementaciones locales para reemplazar las llamadas a RequestExecutor
+    private <T> T postRequest(RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType) {
+        return client.exchange(path, HttpMethod.POST, request, responseType).getBody();
+    }
+
+    private <T> T getRequest(RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType,
+            Map<String, String> params) {
+        return client.exchange(path, HttpMethod.GET, request, responseType, params).getBody();
+    }
+
+    private <T> T deleteRequest(RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType) {
+        return client.exchange(path, HttpMethod.DELETE, request, responseType).getBody();
     }
 }

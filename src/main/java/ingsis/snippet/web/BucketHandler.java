@@ -8,6 +8,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 
 @Component
 public class BucketHandler {
@@ -22,10 +24,11 @@ public class BucketHandler {
         headers.set("Authorization", token);
         HttpEntity<String> request = new HttpEntity<>(text, headers);
         try {
-            putRequest(bucketWebClient, "/v1/asset/" + path, request);
+            // Use exchange to include headers (body is the request entity)
+            ResponseEntity<Void> resp = bucketWebClient.exchange("/v1/asset/" + path, HttpMethod.PUT, request, Void.class);
             return Response.withData(null);
         } catch (HttpClientErrorException e) {
-            return Response.withError(new Error<>(500, "Internal Server Error"));
+            return Response.withError(new Error<>(e.getStatusCode().value(), "Internal Server Error"));
         }
     }
 
