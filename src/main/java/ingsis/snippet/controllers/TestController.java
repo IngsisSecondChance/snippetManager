@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ingsis.snippet.services.TestService;
 
+
 @RestController
 @RequestMapping("/test")
 public class TestController {
@@ -32,4 +33,43 @@ public class TestController {
         return ResponseEntity.ok(response.getData());
     }
 
+
+    @GetMapping("/get-all")
+    public ResponseEntity<Object> getTestsForSnippet(@RequestParam String snippetId,
+                                                     @RequestHeader("Authorization") String token) {
+        Response<List<TestDTO>> response = testService.getTestsForSnippet(snippetId, token);
+        if (response.isError()) {
+            return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok(response.getData());
+    }
+
+    @PostMapping("/update")
+    public ResponseEntity<Object> updateTest(@RequestBody TestDTO testDTO,
+                                             @RequestHeader("Authorization") String token) {
+        Response<Void> response = testService.updateTest(testDTO, token);
+        if (response.isError()) {
+            return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<Object> deleteTest(@RequestParam String testId,
+                                             @RequestHeader("Authorization") String token) {
+        Response<Void> response = testService.deleteTest(testId, token);
+        if (response.isError()) {
+            return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/run")
+    public ResponseEntity<Object> runTest(@RequestBody TestDTO testDTO, @RequestHeader("Authorization") String token) {
+        Response<Void> response = testService.runTest(testDTO, token);
+        if (response.isError()) {
+            return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+        }
+        return ResponseEntity.ok().build();
+}
 }

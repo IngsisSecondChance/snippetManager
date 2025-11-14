@@ -1,6 +1,7 @@
 
 package ingsis.snippet.dto;
 
+import ingsis.snippet.entities.Snippet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,7 +20,7 @@ public class SnippetCodeDetails {
     private String extension;
     private String code;
     // Use a simple String for lint status to avoid depending on external/renamed Snippet class
-    private String lintStatus;
+    private Snippet.Status lintStatus;
 
     // Convenience constructor used by service when lintStatus is not available yet
     public SnippetCodeDetails(String author, String id, String title, String description, String language, String extension, String code) {

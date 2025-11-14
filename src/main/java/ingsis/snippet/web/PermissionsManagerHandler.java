@@ -5,6 +5,7 @@ import java.util.Map;
 
 import ingsis.snippet.dto.PaginatedUsers;
 import ingsis.snippet.dto.Response;
+import ingsis.snippet.dto.ShareSnippetDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -80,16 +81,22 @@ public class PermissionsManagerHandler {
         }
     }
 
-    public Response<List<SnippetPermissionGrantResponse>> getSnippetRelationships(String token, String filterType) {
+    public Response<List<ingsis.snippet.dto.SnippetPermissionGrantResponse>> getSnippetRelationships(String token, String filterType) {
         HttpHeaders header = new HttpHeaders();
         header.set("Authorization", token);
         HttpEntity<Void> requestPermissions = new HttpEntity<>(header);
         try {
             String response = getRequest(permissionsWebClient, "snippets/get/relationships", requestPermissions,
                     String.class, Map.of("filterType", filterType));
-            List<SnippetPermissionGrantResponse> snippetIds = objectMapper.readValue(response, new TypeReference<>() {
-            });
-            return Response.withData(snippetIds);
+            // parse into external DTOs
+            List<com.printScript.snippetService.DTO.SnippetPermissionGrantResponse> externalList = objectMapper.readValue(
+                    response, new TypeReference<List<com.printScript.snippetService.DTO.SnippetPermissionGrantResponse>>() {
+                    });
+            // map to local DTOs (snippetId, author)
+            List<ingsis.snippet.dto.SnippetPermissionGrantResponse> localList = externalList.stream()
+                    .map(e -> new ingsis.snippet.dto.SnippetPermissionGrantResponse(e.getSnippetId(), e.getGranteeId()))
+                    .toList();
+            return Response.withData(localList);
         } catch (HttpClientErrorException e) {
             return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
         } catch (Exception e) {

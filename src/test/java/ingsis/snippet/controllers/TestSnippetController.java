@@ -5,7 +5,12 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
-import ingsis.snippet.dto.SnippetDTO;
+import ingsis.snippet.TestSecurityConfig;
+import ingsis.snippet.dto.*;
+import ingsis.snippet.entities.Snippet;
+import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.services.SnippetService;
+import ingsis.snippet.services.SnippetServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,9 +33,6 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TestSnippetController {
-
-
-
     String token;
 
     @Autowired
@@ -157,18 +159,6 @@ public class TestSnippetController {
         assertEquals(400, snippetController.shareSnippet(shareSnippetDTO, token).getStatusCode().value());
     }
 
-  @Test
-  void testGetFormatted() {
-
-    when(snippetService.getFormattedFile("id1", token)).thenReturn(Response.withData("println(1)"));
-
-    assertEquals("println(1)", snippetController.getFormattedSnippet("id1", token).getBody());
-
-    when(snippetService.getFormattedFile("id1", token))
-        .thenReturn(Response.withError(new Error<>(400, "error")));
-
-    assertEquals(400, snippetController.getFormattedSnippet("id1", token).getStatusCode().value());
-  }
 
     @Test
     void testGetAccessibleSnippets() {

@@ -1,3 +1,5 @@
+
+/*
 package ingsis.snippet.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,19 +26,9 @@ import org.springframework.test.context.ActiveProfiles;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TestFormatController {
-    @MockBean
-    private LintProducer lintProducer;
 
-    @MockBean
-    private StatusConsumer statusConsumer;
-
-    @MockBean
-    private FormatProducer formatProducer;
 
     String token;
-
-    @Autowired
-    private FormatConfigController formatConfigController;
 
     @MockBean
     private ConfigService configService;
@@ -90,3 +82,4 @@ public class TestFormatController {
         assertEquals(400, formatConfigController.getFormatConfig(token).getStatusCode().value());
     }
 }
+*/

@@ -6,7 +6,13 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import ingsis.snippet.TestSecurityConfig;
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.dto.TestDTO;
+import ingsis.snippet.entities.Snippet;
+import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.repositories.SnippetRepository;
+import ingsis.snippet.repositories.TestRepository;
 import ingsis.snippet.web.BucketHandler;
 import ingsis.snippet.web.PermissionsManagerHandler;
 import ingsis.snippet.web.PrintScriptServiceHandler;
@@ -30,7 +36,7 @@ import jakarta.transaction.Transactional;
 @Import(TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestService{
+public class TestServiceTest {
 
     @Autowired
     private TestRepository testRepository;
@@ -46,12 +52,6 @@ public class TestService{
 
     @MockBean
     private PrintScriptServiceHandler printScriptServiceHandler;
-
-    @MockBean
-    private LintProducer lintProducer;
-
-    @MockBean
-    private StatusConsumer statusConsumer;
 
     @Autowired
     private TestService testService;
@@ -96,7 +96,7 @@ public class TestService{
 
         // Check if the test was saved
         assertEquals(1, testRepository.count());
-        com.printScript.snippetService.entities.Test test = testRepository.findAll().getFirst();
+        ingsis.snippet.entities.Test test = testRepository.findAll().getFirst();
         assertEquals(testDTO.getTitle(), test.getTitle());
         assertEquals(testDTO.getInputQueue(), List.of());
         assertEquals(testDTO.getOutputQueue(), List.of("Hello, World!"));
@@ -161,7 +161,7 @@ public class TestService{
 
         // Check if the test was saved
         assertEquals(1, testRepository.count());
-        com.printScript.snippetService.entities.Test test = testRepository.findAll().getFirst();
+        ingsis.snippet.entities.Test test = testRepository.findAll().getFirst();
         assertEquals(testDTO.getTitle(), test.getTitle());
         assertEquals(testDTO.getInputQueue(), List.of());
         assertEquals(testDTO.getOutputQueue(), List.of("Hello, World!"));
@@ -181,7 +181,7 @@ public class TestService{
 
         // Check if the test was saved
         assertEquals(1, testRepository.count());
-        com.printScript.snippetService.entities.Test updatedTest = testRepository.findAll().getFirst();
+        ingsis.snippet.entities.Test updatedTest = testRepository.findAll().getFirst();
         assertEquals(updatedTestDTO.getTitle(), updatedTest.getTitle());
         assertEquals(updatedTestDTO.getInputQueue(), List.of());
         assertEquals(updatedTestDTO.getOutputQueue(), List.of("Hello, World!"));
@@ -243,7 +243,7 @@ public class TestService{
 
         // Check if the test was saved
         assertEquals(1, testRepository.count());
-        com.printScript.snippetService.entities.Test test = testRepository.findAll().getFirst();
+        ingsis.snippet.entities.Test test = testRepository.findAll().getFirst();
         assertEquals(testDTO.getTitle(), test.getTitle());
         assertEquals(testDTO.getInputQueue(), List.of());
         assertEquals(testDTO.getOutputQueue(), List.of("Hello, World!"));

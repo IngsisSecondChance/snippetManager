@@ -5,6 +5,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import ingsis.snippet.services.TestService;
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.dto.TestDTO;
+import ingsis.snippet.services.SnippetServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,23 +18,15 @@ import org.mockito.quality.Strictness;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import ingsis.snippet.errorDTO.Error;
+
 
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
-@Import(TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestController {
-    @MockBean
-    private LintProducer lintProducer;
-
-    @MockBean
-    private StatusConsumer statusConsumer;
-
-    @MockBean
-    private FormatProducer formatProducer;
+public class TestControllerTest {
 
     String token;
 

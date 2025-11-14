@@ -2,13 +2,8 @@ package ingsis.snippet.controllers;
 
 import static ingsis.snippet.utils.Utils.checkMediaType;
 
+import ingsis.snippet.dto.*;
 import ingsis.snippet.dto.SnippetCodeDetails;
-import ingsis.snippet.dto.SnippetDTO;
-import ingsis.snippet.dto.UpdateSnippetDTO;
-import ingsis.snippet.dto.Tuple;
-import com.printScript.snippetService.DTO.ShareSnippetDTO;
-//import ingsis.snippet.dto.SnippetCodeDetails;
-import ingsis.snippet.dto.Response;
 import ingsis.snippet.exceptions.InvalidSnippetException;
 import ingsis.snippet.services.SnippetService;
 
@@ -26,7 +21,7 @@ public class SnippetController {
     this.snippetService = snippetService;
   }
 
-  // === NUEVO: Guardar snippet (JSON) ===
+  //Guardar snippet (JSON) ===
   @PostMapping("/save")
   public ResponseEntity<Object> saveSnippet(
           @RequestBody SnippetDTO snippetDTO,
@@ -43,7 +38,7 @@ public class SnippetController {
   }
 
 
-  // === NUEVO: Guardar snippet desde archivo ===
+  //Guardar snippet desde archivo ===
   @PostMapping("/save/file")
   public ResponseEntity<Object> saveSnippetFile(
           @RequestParam MultipartFile file,
@@ -74,7 +69,7 @@ public class SnippetController {
     }
   }
 
-  // === EXISTENTE: Subir snippet básico ===
+  //Subir snippet básico ===
   @PostMapping("/upload")
   public ResponseEntity<?> uploadSnippet(
           @RequestParam("file") MultipartFile file,
@@ -124,6 +119,101 @@ public class SnippetController {
         return ResponseEntity.ok(response.getData());
     }
 
+  @PostMapping("/update/file")
+  public ResponseEntity<Object> updateSnippetFile(
+          @RequestParam MultipartFile file,
+          @RequestParam String snippetId,
+          @RequestParam String title,
+          @RequestParam String description,
+          @RequestParam String language,
+          @RequestParam String version,
+          @RequestHeader("Authorization") String token) {
+
+    ResponseEntity<Object> mediaTypeCheck = checkMediaType(file.getContentType());
+    if (mediaTypeCheck != null) {
+      return mediaTypeCheck;
+    }
+
+    try {
+      String code = new String(file.getBytes());
+      UpdateSnippetDTO updateSnippetDTO =
+              new UpdateSnippetDTO(code, snippetId, title, description, language, version);
+
+      Response<SnippetCodeDetails> response =
+              snippetService.updateSnippet(updateSnippetDTO, token);
+
+      if (response.isError()) {
+        return new ResponseEntity<>(
+                response.getError().body(),
+                HttpStatusCode.valueOf(response.getError().code())
+        );
+      }
+      return ResponseEntity.ok(response.getData());
+
+    } catch (Exception e) {
+      return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
+  @GetMapping("/details")
+  public ResponseEntity<Object> getSnippetDetails(
+          @RequestParam String snippetId,
+          @RequestHeader("Authorization") String token) {
+
+    Response<SnippetCodeDetails> response =
+            snippetService.getSnippetDetails(snippetId, token);
+
+    if (response.isError()) {
+      return new ResponseEntity<>(
+              response.getError().body(),
+              HttpStatusCode.valueOf(response.getError().code()));
+    }
+
+    return ResponseEntity.ok(response.getData());
+  }
+
+  @DeleteMapping("/delete")
+  public ResponseEntity<Object> deleteSnippet(
+          @RequestParam String snippetId,
+          @RequestHeader("Authorization") String token) {
+
+    Response<String> response = snippetService.deleteSnippet(snippetId, token);
+    if (response.isError()) {
+      return new ResponseEntity<>(
+              response.getError().body(),
+              HttpStatusCode.valueOf(response.getError().code()));
+    }
+    return ResponseEntity.ok(response.getData());
+  }
+
+  /*
+  @GetMapping("/get/users")
+  public ResponseEntity<Object> getSnippetUsers(
+          @RequestHeader("Authorization") String token,
+          @RequestParam String prefix,
+          @RequestParam Integer page,
+          @RequestParam Integer page_size) {
+
+    Response<PaginatedUsers> response =
+            snippetService.getSnippetUsers(token, prefix, page, page_size);
+
+    if (response.isError()) {
+      return new ResponseEntity<>(
+              response.getError().body(),
+              HttpStatus.valueOf(response.getError().code()));
+    }
+
+    PaginatedUsers paginatedUsers = response.getData();
+    String userId = TokenUtils.decodeToken(token.substring(7)).get("userId");
+
+    paginatedUsers.setUsers(
+            paginatedUsers.getUsers().stream()
+                    .filter(u -> !u.getId().equals(userId))
+                    .toList()
+    );
+
+    return new ResponseEntity<>(paginatedUsers, HttpStatus.OK);
+  }
+|*/
   @GetMapping("/ping")
   public ResponseEntity<String> ping() {
     return ResponseEntity.ok("pong 🟢");

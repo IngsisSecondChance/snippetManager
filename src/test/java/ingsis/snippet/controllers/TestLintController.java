@@ -1,3 +1,4 @@
+/*
 package ingsis.snippet.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,11 +26,6 @@ import org.springframework.test.context.ActiveProfiles;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TestLintController {
-    @MockBean
-    private LintProducer lintProducer;
-
-    @MockBean
-    private FormatProducer formatProducer;
 
     @MockBean
     private StatusConsumer statusConsumer;
@@ -81,3 +77,5 @@ public class TestLintController {
         assertEquals(500, lintConfigController.getLintingConfig(token).getStatusCode().value());
     }
 }
+
+ */

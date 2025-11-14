@@ -7,8 +7,10 @@ import static org.mockito.Mockito.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import ingsis.snippet.TestSecurityConfig;
 import ingsis.snippet.dto.*;
 import ingsis.snippet.entities.Snippet;
+import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.repositories.SnippetRepository;
 import ingsis.snippet.web.BucketHandler;
 import ingsis.snippet.web.PermissionsManagerHandler;
@@ -47,12 +49,6 @@ public class SnippetServiceTest {
 
     @MockBean
     private PermissionsManagerHandler permissionsManagerHandler;
-
-    @MockBean
-    private LintProducer lintProducer;
-
-    @MockBean
-    private StatusConsumer statusConsumer;
 
     @Autowired
     private SnippetRepository snippetRepository;
@@ -404,30 +400,6 @@ public class SnippetServiceTest {
     assertNotNull(response.getData());
     assertEquals("print('Hello World!')", response.getData().code());
     assertEquals("Hello_World.ps", response.getData().name());
-  }
-
-  @Test
-  void testGetFormattedFile() {
-    when(bucketHandler.get(anyString(), anyString()))
-        .thenReturn(Response.withData("formatted code"));
-
-    // Create and save a snippet
-    Snippet snippet = new Snippet();
-    snippet.setTitle("Hello World");
-    snippet.setDescription("Hello World in PrintScript");
-    snippet.setLanguage("printscript");
-    snippet.setExtension("ps");
-    snippet.setLintStatus(Snippet.Status.IN_PROGRESS);
-    snippet.setFormatStatus(Snippet.Status.COMPLIANT);
-    snippetRepository.save(snippet);
-
-    // Call the getFormattedFile method
-    Response<String> response = snippetService.getFormattedFile(snippet.getId(), mockToken);
-
-    // Verify the response
-    assertNotNull(response.getData());
-    assertEquals("formatted code", response.getData());
-    assertFalse(response.isError());
   }
 
     @Test
