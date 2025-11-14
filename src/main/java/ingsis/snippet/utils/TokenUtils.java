@@ -1,6 +1,6 @@
 package ingsis.snippet.utils;
 
-/*
+
 import java.util.Map;
 
 import com.auth0.jwt.JWT;
@@ -13,4 +13,3 @@ public class TokenUtils {
     }
 }
 
- */

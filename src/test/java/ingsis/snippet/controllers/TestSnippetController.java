@@ -4,7 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
-
+import ingsis.snippet.dto.User;
 import ingsis.snippet.TestSecurityConfig;
 import ingsis.snippet.dto.*;
 import ingsis.snippet.entities.Snippet;

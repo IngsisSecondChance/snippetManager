@@ -7,9 +7,12 @@ import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.exceptions.InvalidSnippetException;
 import ingsis.snippet.services.SnippetService;
 
+import ingsis.snippet.utils.TokenUtils;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/snippets")
@@ -35,6 +38,33 @@ public class SnippetController {
       );
     }
     return ResponseEntity.ok(response.getData());
+  }
+  @GetMapping("/get/all")
+  public ResponseEntity<Object> getAccessibleSnippets(@RequestHeader("Authorization") String token,
+                                                      @RequestParam(required = false) String relation, @RequestParam Integer page,
+                                                      @RequestParam Integer page_size, @RequestParam String prefix) {
+    Response<PaginationAndDetails> response = snippetService.getAccessibleSnippets(token, relation, page, page_size,
+            prefix);
+    if (response.isError()) {
+      return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+    }
+    return new ResponseEntity<>(response.getData(), HttpStatus.OK);
+  }
+
+  @GetMapping("/get/users")
+  public ResponseEntity<Object> getSnippetUsers(@RequestHeader("Authorization") String token,
+                                                @RequestParam String prefix, @RequestParam Integer page, @RequestParam Integer page_size) {
+    Response<PaginatedUsers> response = snippetService.getSnippetUsers(token, prefix, page, page_size);
+    String userId = TokenUtils.decodeToken(token.substring(7)).get("userId");
+    if (response.isError()) {
+      return new ResponseEntity<>(response.getError().body(), HttpStatus.valueOf(response.getError().code()));
+    }
+    PaginatedUsers paginatedUsers = response.getData();
+    List<User> filteredUsers = paginatedUsers.getUsers().stream().filter(user -> !user.getId().equals(userId))
+            .toList();
+    paginatedUsers.setUsers(filteredUsers);
+
+    return new ResponseEntity<>(paginatedUsers, HttpStatus.OK);
   }
 
 
