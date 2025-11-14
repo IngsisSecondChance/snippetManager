@@ -1,6 +1,5 @@
-package com.printScript.snippetService.services;
+package ingsis.snippet.services;
 
-import static com.printScript.snippetService.utils.Utils.getViolationsMessageError;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,25 +7,28 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.dto.TestDTO;
+import ingsis.snippet.entities.Snippet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ingsis.snippet.web.BucketHandler;
+import ingsis.snippet.web.PermissionsManagerHandler;
+import ingsis.snippet.web.PrintScriptServiceHandler;
+import ingsis.snippet.entities.Test;
+import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.repositories.SnippetRepository;
+import ingsis.snippet.repositories.TestRepository;
 
-import com.printScript.snippetService.DTO.Response;
-import com.printScript.snippetService.DTO.TestDTO;
-import com.printScript.snippetService.entities.Snippet;
-import com.printScript.snippetService.entities.Test;
-import com.printScript.snippetService.errorDTO.Error;
-import com.printScript.snippetService.repositories.SnippetRepository;
-import com.printScript.snippetService.repositories.TestRepository;
-import com.printScript.snippetService.web.handlers.BucketHandler;
-import com.printScript.snippetService.web.handlers.PermissionsManagerHandler;
-import com.printScript.snippetService.web.handlers.PrintScriptServiceHandler;
+
 
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+
+import static ingsis.snippet.utils.Utils.getViolationsMessageError;
 
 @Service
 public class TestService {

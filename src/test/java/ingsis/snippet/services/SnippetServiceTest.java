@@ -1,4 +1,4 @@
-package com.printScript.snippetService.services;
+package ingsis.snippet.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -7,6 +7,12 @@ import static org.mockito.Mockito.*;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import ingsis.snippet.dto.*;
+import ingsis.snippet.entities.Snippet;
+import ingsis.snippet.repositories.SnippetRepository;
+import ingsis.snippet.web.BucketHandler;
+import ingsis.snippet.web.PermissionsManagerHandler;
+import ingsis.snippet.web.PrintScriptServiceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,16 +30,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.printScript.snippetService.DTO.*;
-import com.printScript.snippetService.TestSecurityConfig;
-import com.printScript.snippetService.entities.Snippet;
-import com.printScript.snippetService.errorDTO.Error;
-import com.printScript.snippetService.redis.LintProducer;
-import com.printScript.snippetService.redis.StatusConsumer;
-import com.printScript.snippetService.repositories.SnippetRepository;
-import com.printScript.snippetService.web.handlers.BucketHandler;
-import com.printScript.snippetService.web.handlers.PermissionsManagerHandler;
-import com.printScript.snippetService.web.handlers.PrintScriptServiceHandler;
+
 
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)

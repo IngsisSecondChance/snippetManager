@@ -1,4 +1,4 @@
-package com.printScript.snippetService.services;
+package ingsis.snippet.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -22,20 +22,7 @@ import org.springframework.test.context.ActiveProfiles;
 import com.printScript.snippetService.DTO.Response;
 import com.printScript.snippetService.TestSecurityConfig;
 import com.printScript.snippetService.entities.Snippet;
-import com.printScript.snippetService.errorDTO.Error;
-import com.printScript.snippetService.redis.LintProducer;
-import com.printScript.snippetService.redis.StatusConsumer;
-import com.printScript.snippetService.repositories.FormatConfigRepository;
-import com.printScript.snippetService.repositories.LintingConfigRepository;
-import com.printScript.snippetService.repositories.SnippetRepository;
-import com.printScript.snippetService.web.handlers.BucketHandler;
-import com.printScript.snippetService.web.handlers.PermissionsManagerHandler;
 
-import DTO.FormatConfigDTO;
-import DTO.LintingConfigDTO;
-import Utils.FormatSerializer;
-import Utils.LintSerializer;
-import events.ConfigPublishEvent;
 
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)

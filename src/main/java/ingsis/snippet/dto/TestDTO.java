@@ -1,4 +1,4 @@
-package com.printScript.snippetService.DTO;
+package ingsis.snippet.dto;
 
 import java.util.List;
 

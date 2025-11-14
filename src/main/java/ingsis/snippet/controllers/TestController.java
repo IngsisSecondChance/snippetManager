@@ -1,15 +1,14 @@
-package com.printScript.snippetService.controllers;
+package ingsis.snippet.controllers;
 
 import java.util.List;
 
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.dto.TestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import com.printScript.snippetService.DTO.Response;
-import com.printScript.snippetService.DTO.TestDTO;
-import com.printScript.snippetService.services.TestService;
+import ingsis.snippet.services.TestService;
 
 @RestController
 @RequestMapping("/test")
@@ -32,3 +31,5 @@ public class TestController {
         }
         return ResponseEntity.ok(response.getData());
     }
+
+}

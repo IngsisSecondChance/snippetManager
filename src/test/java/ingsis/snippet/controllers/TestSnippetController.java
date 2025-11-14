@@ -1,10 +1,11 @@
-package com.printScript.snippetService.controllers;
+package ingsis.snippet.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
 
+import ingsis.snippet.dto.SnippetDTO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,15 +20,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.printScript.snippetService.DTO.*;
-import com.printScript.snippetService.TestSecurityConfig;
-import com.printScript.snippetService.entities.Snippet;
-import com.printScript.snippetService.errorDTO.Error;
-import com.printScript.snippetService.redis.FormatProducer;
-import com.printScript.snippetService.redis.LintProducer;
-import com.printScript.snippetService.redis.StatusConsumer;
-import com.printScript.snippetService.services.SnippetService;
-import com.printScript.snippetService.services.SnippetServiceTest;
+
 
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -36,14 +29,7 @@ import com.printScript.snippetService.services.SnippetServiceTest;
 @SpringBootTest
 public class TestSnippetController {
 
-    @MockBean
-    private LintProducer lintProducer;
 
-    @MockBean
-    private FormatProducer formatProducer;
-
-    @MockBean
-    private StatusConsumer statusConsumer;
 
     String token;
 

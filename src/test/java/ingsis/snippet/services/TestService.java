@@ -1,4 +1,4 @@
-package com.printScript.snippetService.services;
+package ingsis.snippet.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -6,6 +6,10 @@ import static org.mockito.Mockito.when;
 import java.util.List;
 import java.util.regex.Pattern;
 
+import ingsis.snippet.repositories.SnippetRepository;
+import ingsis.snippet.web.BucketHandler;
+import ingsis.snippet.web.PermissionsManagerHandler;
+import ingsis.snippet.web.PrintScriptServiceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,18 +22,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.printScript.snippetService.DTO.Response;
-import com.printScript.snippetService.DTO.TestDTO;
-import com.printScript.snippetService.TestSecurityConfig;
-import com.printScript.snippetService.entities.Snippet;
-import com.printScript.snippetService.errorDTO.Error;
-import com.printScript.snippetService.redis.LintProducer;
-import com.printScript.snippetService.redis.StatusConsumer;
-import com.printScript.snippetService.repositories.SnippetRepository;
-import com.printScript.snippetService.repositories.TestRepository;
-import com.printScript.snippetService.web.handlers.BucketHandler;
-import com.printScript.snippetService.web.handlers.PermissionsManagerHandler;
-import com.printScript.snippetService.web.handlers.PrintScriptServiceHandler;
 
 import jakarta.transaction.Transactional;
 
@@ -38,7 +30,7 @@ import jakarta.transaction.Transactional;
 @Import(TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestServiceTests {
+public class TestService{
 
     @Autowired
     private TestRepository testRepository;

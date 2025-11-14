@@ -1,4 +1,4 @@
-package com.printScript.snippetService.controllers;
+package ingsis.snippet.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -17,16 +17,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.printScript.snippetService.DTO.Response;
-import com.printScript.snippetService.TestSecurityConfig;
-import com.printScript.snippetService.errorDTO.Error;
-import com.printScript.snippetService.redis.FormatProducer;
-import com.printScript.snippetService.redis.LintProducer;
-import com.printScript.snippetService.redis.StatusConsumer;
-import com.printScript.snippetService.services.ConfigService;
-import com.printScript.snippetService.services.SnippetServiceTest;
-
-import DTO.FormatConfigDTO;
 
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
