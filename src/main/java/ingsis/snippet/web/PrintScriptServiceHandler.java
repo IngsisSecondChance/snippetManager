@@ -57,25 +57,6 @@ public class PrintScriptServiceHandler {
         }
     }
 
-    public Response<Void> getLintingErrors(String code, String version, String language, String token) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", token);
-        HttpEntity<LintRequest> requestPrintScript = new HttpEntity<>(new LintRequest(code, version, language), headers);
-        try {
-            printScriptWebClient.postForEntity("/runner/lintingErrors", requestPrintScript, Void.class);
-            return Response.withData(null);
-        } catch (HttpClientErrorException e) {
-            String errors = e.getResponseBodyAsString();
-            try {
-                List<ErrorMessage> errorMessages = objectMapper.readValue(errors, new TypeReference<>() {
-                });
-                return Response.withError(new Error<>(e.getStatusCode().value(), errorMessages));
-            } catch (JsonProcessingException ex) {
-                return Response.withError(new Error<>(500, errors));
-            }
-        }
-    }
-
     public Response<Void> executeTest(String snippetId, String version, List<String> inputs, List<String> expected,
                       String token) {
         HttpHeaders headers = new HttpHeaders();
