@@ -3,6 +3,7 @@ package ingsis.snippet.web;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import ingsis.snippet.dto.PaginatedUsers;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.dto.ShareSnippetDTO;
@@ -16,9 +17,9 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.printScript.snippetService.DTO.*;
 import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.services.RestTemplateService;
+import ingsis.snippet.dto.GrantResponse;
 
 @Component
 public class PermissionsManagerHandler {
@@ -81,25 +82,19 @@ public class PermissionsManagerHandler {
         }
     }
 
-    public Response<List<ingsis.snippet.dto.SnippetPermissionGrantResponse>> getSnippetRelationships(String token, String filterType) {
+    public Response<List<GrantResponse>> getSnippetRelationships(String token, String filterType) {
         HttpHeaders header = new HttpHeaders();
         header.set("Authorization", token);
         HttpEntity<Void> requestPermissions = new HttpEntity<>(header);
         try {
             String response = getRequest(permissionsWebClient, "snippets/get/relationships", requestPermissions,
                     String.class, Map.of("filterType", filterType));
-            // parse into external DTOs
-            List<com.printScript.snippetService.DTO.SnippetPermissionGrantResponse> externalList = objectMapper.readValue(
-                    response, new TypeReference<List<com.printScript.snippetService.DTO.SnippetPermissionGrantResponse>>() {
-                    });
-            // map to local DTOs (snippetId, author)
-            List<ingsis.snippet.dto.SnippetPermissionGrantResponse> localList = externalList.stream()
-                    .map(e -> new ingsis.snippet.dto.SnippetPermissionGrantResponse(e.getSnippetId(), e.getGranteeId()))
-                    .toList();
-            return Response.withData(localList);
+            List<GrantResponse> snippetIds = objectMapper.readValue(response, new TypeReference<>() {
+            });
+            return Response.withData(snippetIds);
         } catch (HttpClientErrorException e) {
             return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-        } catch (Exception e) {
+        } catch (JsonProcessingException e) {
             return Response.withError(new Error<>(400, "Error parsing response"));
         }
     }

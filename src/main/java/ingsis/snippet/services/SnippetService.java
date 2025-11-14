@@ -358,19 +358,19 @@ public class SnippetService {
     int size = pageSize == null || pageSize <= 0 ? 10 : pageSize;
     String titlePrefix = name == null ? "" : name;
 
-    Response<List<ingsis.snippet.dto.SnippetPermissionGrantResponse>> relationshipsResponse =
+    Response<List<ingsis.snippet.dto.GrantResponse>> relationshipsResponse =
         permissionsManagerHandler.getSnippetRelationships(token, relation);
     if (relationshipsResponse.isError()) {
       return Response.withError(relationshipsResponse.getError());
     }
 
-    List<ingsis.snippet.dto.SnippetPermissionGrantResponse> relationships = relationshipsResponse.getData();
+    List<ingsis.snippet.dto.GrantResponse> relationships = relationshipsResponse.getData();
     if (relationships == null || relationships.isEmpty()) {
       PaginationAndDetails empty = new PaginationAndDetails(pageNum, size, 0, List.of());
       return Response.withData(empty);
     }
 
-    List<String> ids = relationships.stream().map(ingsis.snippet.dto.SnippetPermissionGrantResponse::getSnippetId).toList();
+    List<String> ids = relationships.stream().map(ingsis.snippet.dto.GrantResponse::getSnippetId).toList();
     Pageable pageable = PageRequest.of(pageNum, size);
 
     List<Snippet> snippets = snippetRepository.findByIdInAndTitleStartingWith(ids, titlePrefix, pageable);
@@ -393,7 +393,7 @@ public class SnippetService {
 
       String author = relationships.stream()
           .filter(rel -> rel.getSnippetId().equals(snippet.getId()))
-          .map(ingsis.snippet.dto.SnippetPermissionGrantResponse::getAuthor)
+          .map(ingsis.snippet.dto.GrantResponse::getAuthor)
           .findFirst().orElse(null);
       detail.setAuthor(author);
 
