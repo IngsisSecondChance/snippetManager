@@ -1,46 +1,81 @@
 plugins {
     java
-    id("org.springframework.boot") version "3.2.10"
-    id("io.spring.dependency-management") version "1.1.7"
-    jacoco
+    id("org.springframework.boot") version "3.3.4"
+    id("io.spring.dependency-management") version "1.1.6"
     id("com.diffplug.spotless") version "6.25.0"
-    checkstyle
+    id("checkstyle")
+    id("jacoco")
+    kotlin("jvm") version "2.0.21"
 }
 
 group = "ingsis"
 version = "0.0.1-SNAPSHOT"
 description = "ingsis project for Spring Boot"
 
-java { toolchain { languageVersion = JavaLanguageVersion.of(17) } }
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
 
-repositories { mavenCentral() }
+repositories {
+    mavenCentral()
+    maven {
+        name = "GitHubPackages"
+        url = uri("https://maven.pkg.github.com/austral-ingsis/class-redis-streams")
+        credentials {
+            username = (project.findProperty("gpr.user") as String?) ?: System.getenv("USERNAME")
+            password = (project.findProperty("gpr.key") as String?) ?: System.getenv("TOKEN")
+        }
+    }
+}
 
 dependencies {
+    //---auth0---
+    implementation("com.auth0:java-jwt:4.4.0")
+
+    // --- Spring Boot starters ---
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-validation")
 
-    // Spring Cloud dependencies
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    // --- Validation / Hibernate ---
+    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
+    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
+    implementation("org.glassfish:jakarta.el:4.0.2")
 
+    // --- Formatting ---
+    implementation("com.google.googlejavaformat:google-java-format:1.19.2")
+
+    // --- Spring Cloud ---
+    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
+
+    // --- Redis ---
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
+
+    // --- Security ---
+    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.security:spring-security-oauth2-jose")
+    implementation("org.springframework.security:spring-security-oauth2-core")
+
+    // --- Lombok ---
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
 
+    // --- Database ---
     runtimeOnly("org.postgresql:postgresql")
+    // H2 para tests (resolve org.h2.Driver y la URL jdbc:h2:...)
+    testImplementation("com.h2database:h2")
 
-    // Test dependencies
+    // --- Testing ---
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation(platform("org.testcontainers:testcontainers-bom:1.20.1"))
     testImplementation("org.testcontainers:testcontainers")
     testImplementation("org.testcontainers:junit-jupiter")
     testImplementation("org.testcontainers:postgresql")
-    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     testImplementation("org.springframework.security:spring-security-test")
+    testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
 dependencyManagement {
@@ -49,15 +84,16 @@ dependencyManagement {
     }
 }
 
-tasks.withType<Test> {
-    useJUnitPlatform()
+jacoco {
+    toolVersion = "0.8.12"
 }
-
-jacoco { toolVersion = "0.8.12" }
 
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
-    reports { xml.required.set(true); html.required.set(true) }
+    reports {
+        xml.required.set(true)
+        html.required.set(true)
+    }
 }
 
 spotless {
@@ -72,13 +108,6 @@ checkstyle {
     config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
 }
 
-dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-security")
-    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("org.springframework.security:spring-security-oauth2-jose")
-    implementation("org.springframework.security:spring-security-oauth2-core")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
-}
 tasks.test {
     useJUnitPlatform()
     exclude("**/SnippetApplicationTests.class")
