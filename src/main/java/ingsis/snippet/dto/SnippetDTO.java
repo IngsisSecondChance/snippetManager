@@ -1,8 +1,7 @@
 package ingsis.snippet.dto;
 
-import java.util.Objects;
-
 import jakarta.validation.constraints.NotBlank;
+import java.util.Objects;
 import lombok.*;
 
 @Getter
@@ -24,7 +23,8 @@ public class SnippetDTO {
   @NotBlank(message = "Code is required")
   private String code;
 
-  public SnippetDTO(String code, String title, String description, String language, String extension) {
+  public SnippetDTO(
+      String code, String title, String description, String language, String extension) {
     this.title = title;
     this.description = description;
     this.language = language;
@@ -41,8 +41,10 @@ public class SnippetDTO {
       return false;
     }
     SnippetDTO snippetDTO = (SnippetDTO) obj;
-    return Objects.equals(title, snippetDTO.title) && Objects.equals(description, snippetDTO.description)
-            && Objects.equals(language, snippetDTO.language) && Objects.equals(extension, snippetDTO.extension)
-            && Objects.equals(code, snippetDTO.code);
+    return Objects.equals(title, snippetDTO.title)
+        && Objects.equals(description, snippetDTO.description)
+        && Objects.equals(language, snippetDTO.language)
+        && Objects.equals(extension, snippetDTO.extension)
+        && Objects.equals(code, snippetDTO.code);
   }
 }

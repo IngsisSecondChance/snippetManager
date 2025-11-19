@@ -6,6 +6,6 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 public class GrantResponse {
-    private String snippetId;
-    private String author;
+  private String snippetId;
+  private String author;
 }

@@ -1,4 +1,3 @@
 package ingsis.snippet.dto;
 
-public record ValidationRequest(String code, String version) {
-}
+public record ValidationRequest(String code, String version) {}

@@ -65,6 +65,8 @@ dependencies {
 
     // --- Database ---
     runtimeOnly("org.postgresql:postgresql")
+    // H2 para tests (resolve org.h2.Driver y la URL jdbc:h2:...)
+    testImplementation("com.h2database:h2")
 
     // --- Testing ---
     testImplementation("org.springframework.boot:spring-boot-starter-test")

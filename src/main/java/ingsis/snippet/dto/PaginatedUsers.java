@@ -1,20 +1,18 @@
 package ingsis.snippet.dto;
 
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import ingsis.snippet.dto.User;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 public class PaginatedUsers {
-    Integer page;
-    Integer page_size;
-    Integer count;
-    List<User> users;
+  Integer page;
+  Integer page_size;
+  Integer count;
+  List<User> users;
 }

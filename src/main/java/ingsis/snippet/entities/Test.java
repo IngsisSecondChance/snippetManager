@@ -11,20 +11,17 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class Test {
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private String id;
 
-    @Column
-    private String title;
+  @Column private String title;
 
-    @Column
-    private String inputs;
+  @Column private String inputs;
 
-    @Column
-    private String expectedOutputs;
+  @Column private String expectedOutputs;
 
-    @ManyToOne
-    @JoinColumn(name = "snippet_id")
-    private Snippet snippet;
+  @ManyToOne
+  @JoinColumn(name = "snippet_id")
+  private Snippet snippet;
 }

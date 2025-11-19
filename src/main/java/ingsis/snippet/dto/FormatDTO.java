@@ -9,12 +9,12 @@ import lombok.Setter;
 @Getter
 @Setter
 public class FormatDTO {
-    @NotBlank(message = "Code is required")
-    private String code;
+  @NotBlank(message = "Code is required")
+  private String code;
 
-    @NotBlank(message = "Version is required")
-    private String version;
+  @NotBlank(message = "Version is required")
+  private String version;
 
-    @NotBlank(message = "Snippet id is required")
-    private String snippetId;
+  @NotBlank(message = "Snippet id is required")
+  private String snippetId;
 }

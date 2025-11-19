@@ -4,9 +4,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-import java.util.List;
-import java.util.regex.Pattern;
-
 import ingsis.snippet.TestSecurityConfig;
 import ingsis.snippet.dto.*;
 import ingsis.snippet.entities.Snippet;
@@ -15,6 +12,8 @@ import ingsis.snippet.repositories.SnippetRepository;
 import ingsis.snippet.web.BucketHandler;
 import ingsis.snippet.web.PermissionsManagerHandler;
 import ingsis.snippet.web.PrintScriptServiceHandler;
+import java.util.List;
+import java.util.regex.Pattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,8 +31,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.test.context.ActiveProfiles;
 
-
-
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
 @Import(TestSecurityConfig.class)
@@ -41,101 +38,99 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 public class SnippetServiceTest {
 
-    @MockBean
-    private BucketHandler bucketHandler;
+  @MockBean private BucketHandler bucketHandler;
 
-    @MockBean
-    private PrintScriptServiceHandler printScriptServiceHandler;
+  @MockBean private PrintScriptServiceHandler printScriptServiceHandler;
 
-    @MockBean
-    private PermissionsManagerHandler permissionsManagerHandler;
+  @MockBean private PermissionsManagerHandler permissionsManagerHandler;
 
-    @Autowired
-    private SnippetRepository snippetRepository;
+  @Autowired private SnippetRepository snippetRepository;
 
-    @Autowired
-    private SnippetService snippetService;
+  @Autowired private SnippetService snippetService;
 
-    private final Pattern uuid = Pattern.compile("([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})");
+  private final Pattern uuid = Pattern.compile("([a-f0-9]{8}(-[a-f0-9]{4}){4}[a-f0-9]{8})");
 
-    private String mockToken;
+  private String mockToken;
 
-    @BeforeEach
-    void setUp() {
-        mockToken = securityConfig(this);
+  @BeforeEach
+  void setUp() {
+    mockToken = securityConfig(this);
 
-        when(printScriptServiceHandler.validateCode(anyString(), anyString(), anyString()))
-                .thenReturn(Response.withData("Code validated successfully"));
+    when(printScriptServiceHandler.validateCode(anyString(), anyString(), anyString()))
+        .thenReturn(Response.withData("Code validated successfully"));
 
-        when(bucketHandler.put(anyString(), anyString(), anyString())).thenReturn(Response.withData(null));
+    when(bucketHandler.put(anyString(), anyString(), anyString()))
+        .thenReturn(Response.withData(null));
 
-        when(permissionsManagerHandler.getSnippetAuthor(anyString(), anyString()))
-                .thenReturn(Response.withData("mockUsername"));
+    when(permissionsManagerHandler.getSnippetAuthor(anyString(), anyString()))
+        .thenReturn(Response.withData("mockUsername"));
 
-        doReturn(Response.withData(null)).when(permissionsManagerHandler).saveRelation(anyString(), anyString(),
-                anyString());
+    doReturn(Response.withData(null))
+        .when(permissionsManagerHandler)
+        .saveRelation(anyString(), anyString(), anyString());
 
-        when(permissionsManagerHandler.checkPermissions(anyString(), anyString(), anyString()))
-                .thenReturn(Response.withData(null));
-    }
+    when(permissionsManagerHandler.checkPermissions(anyString(), anyString(), anyString()))
+        .thenReturn(Response.withData(null));
+  }
 
-    public static String securityConfig(Object testClass) {
-        MockitoAnnotations.openMocks(testClass);
+  public static String securityConfig(Object testClass) {
+    MockitoAnnotations.openMocks(testClass);
 
-        SecurityContext securityContext = mock(SecurityContext.class);
-        Authentication authentication = mock(Authentication.class);
-        Jwt jwt = mock(Jwt.class);
+    SecurityContext securityContext = mock(SecurityContext.class);
+    Authentication authentication = mock(Authentication.class);
+    Jwt jwt = mock(Jwt.class);
 
-        String header = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
-        String payload = "{\"sub\":\"mockUserId\",\"username\":\"mockUsername\",\"role\":\"user\",\"iat\":1609459200}";
-        String signature = "mockSignature";
+    String header = "{\"alg\":\"HS256\",\"typ\":\"JWT\"}";
+    String payload =
+        "{\"sub\":\"mockUserId\",\"username\":\"mockUsername\",\"role\":\"user\",\"iat\":1609459200}";
+    String signature = "mockSignature";
 
-        String mockToken = base64Encode(header) + "." + base64Encode(payload) + "." + signature;
-        mockToken = "Bearer " + mockToken;
+    String mockToken = base64Encode(header) + "." + base64Encode(payload) + "." + signature;
+    mockToken = "Bearer " + mockToken;
 
-        when(jwt.getTokenValue()).thenReturn(mockToken);
-        when(jwt.getClaim("sub")).thenReturn("mockUserId");
-        when(jwt.getClaim("username")).thenReturn("mockUsername");
-        when(jwt.getClaim("role")).thenReturn("user");
+    when(jwt.getTokenValue()).thenReturn(mockToken);
+    when(jwt.getClaim("sub")).thenReturn("mockUserId");
+    when(jwt.getClaim("username")).thenReturn("mockUsername");
+    when(jwt.getClaim("role")).thenReturn("user");
 
-        when(securityContext.getAuthentication()).thenReturn(authentication);
-        when(authentication.getPrincipal()).thenReturn(jwt);
+    when(securityContext.getAuthentication()).thenReturn(authentication);
+    when(authentication.getPrincipal()).thenReturn(jwt);
 
-        SecurityContextHolder.setContext(securityContext);
-        return mockToken;
-    }
+    SecurityContextHolder.setContext(securityContext);
+    return mockToken;
+  }
 
-    public static String base64Encode(String value) {
-        return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(value.getBytes());
-    }
+  public static String base64Encode(String value) {
+    return java.util.Base64.getUrlEncoder().withoutPadding().encodeToString(value.getBytes());
+  }
 
-    @Test
-    void createSnippetSuccess() {
-        SnippetDTO snippetDTO = new SnippetDTO();
-        snippetDTO.setCode("print('Hello World!')");
-        snippetDTO.setLanguage("printscript");
-        snippetDTO.setExtension("ps");
-        snippetDTO.setDescription("Hello World in PrintScript");
-        snippetDTO.setTitle("Hello World");
+  @Test
+  void createSnippetSuccess() {
+    SnippetDTO snippetDTO = new SnippetDTO();
+    snippetDTO.setCode("print('Hello World!')");
+    snippetDTO.setLanguage("printscript");
+    snippetDTO.setExtension("ps");
+    snippetDTO.setDescription("Hello World in PrintScript");
+    snippetDTO.setTitle("Hello World");
 
-        Response<SnippetCodeDetails> response = snippetService.saveSnippet(snippetDTO, mockToken);
+    Response<SnippetCodeDetails> response = snippetService.saveSnippet(snippetDTO, mockToken);
 
-        assertNotNull(response.getData());
-        assertEquals("mockUsername", response.getData().getAuthor());
-        assertTrue(uuid.matcher(response.getData().getId()).matches());
-        assertEquals("print('Hello World!')", response.getData().getCode());
-        assertEquals("printscript", response.getData().getLanguage());
-        assertEquals("ps", response.getData().getExtension());
+    assertNotNull(response.getData());
+    assertEquals("mockUsername", response.getData().getAuthor());
+    assertTrue(uuid.matcher(response.getData().getId()).matches());
+    assertEquals("print('Hello World!')", response.getData().getCode());
+    assertEquals("printscript", response.getData().getLanguage());
+    assertEquals("ps", response.getData().getExtension());
 
-        // test db
-        Snippet snippet = snippetRepository.findById(response.getData().getId()).get();
-        assertEquals(snippet.getTitle(), "Hello World");
-        assertEquals(snippet.getDescription(), "Hello World in PrintScript");
-        assertEquals(snippet.getLanguage(), "printscript");
-        assertEquals(snippet.getExtension(), "ps");
-        assertEquals(snippet.getLintStatus(), Snippet.Status.IN_PROGRESS);
-        assertEquals(snippet.getFormatStatus(), Snippet.Status.IN_PROGRESS);
-    }
+    // test db
+    Snippet snippet = snippetRepository.findById(response.getData().getId()).get();
+    assertEquals(snippet.getTitle(), "Hello World");
+    assertEquals(snippet.getDescription(), "Hello World in PrintScript");
+    assertEquals(snippet.getLanguage(), "printscript");
+    assertEquals(snippet.getExtension(), "ps");
+    assertEquals(snippet.getLintStatus(), Snippet.Status.IN_PROGRESS);
+    assertEquals(snippet.getFormatStatus(), Snippet.Status.IN_PROGRESS);
+  }
 
   @Test
   void updateSnippetTest() {
@@ -402,76 +397,79 @@ public class SnippetServiceTest {
     assertEquals("Hello_World.ps", response.getData().name());
   }
 
-    @Test
-    void testGetAccessibleSnippets() {
-        Snippet snippet1 = new Snippet();
-        snippet1.setTitle("Title");
-        snippet1.setDescription("Description");
-        snippet1.setLanguage("printscript");
-        snippet1.setExtension("ps");
-        snippet1.setLintStatus(Snippet.Status.IN_PROGRESS);
-        snippet1.setFormatStatus(Snippet.Status.IN_PROGRESS);
-        snippetRepository.save(snippet1);
+  @Test
+  void testGetAccessibleSnippets() {
+    Snippet snippet1 = new Snippet();
+    snippet1.setTitle("Title");
+    snippet1.setDescription("Description");
+    snippet1.setLanguage("printscript");
+    snippet1.setExtension("ps");
+    snippet1.setLintStatus(Snippet.Status.IN_PROGRESS);
+    snippet1.setFormatStatus(Snippet.Status.IN_PROGRESS);
+    snippetRepository.save(snippet1);
 
-        Snippet snippet2 = new Snippet();
-        snippet2.setTitle("Title");
-        snippet2.setDescription("Description");
-        snippet2.setLanguage("printscript");
-        snippet2.setExtension("ps");
-        snippet2.setLintStatus(Snippet.Status.IN_PROGRESS);
-        snippet2.setFormatStatus(Snippet.Status.IN_PROGRESS);
-        snippetRepository.save(snippet2);
+    Snippet snippet2 = new Snippet();
+    snippet2.setTitle("Title");
+    snippet2.setDescription("Description");
+    snippet2.setLanguage("printscript");
+    snippet2.setExtension("ps");
+    snippet2.setLintStatus(Snippet.Status.IN_PROGRESS);
+    snippet2.setFormatStatus(Snippet.Status.IN_PROGRESS);
+    snippetRepository.save(snippet2);
 
-        List<SnippetPermissionGrantResponse> relationships = List.of(
-                new SnippetPermissionGrantResponse(snippet1.getId(), "mockUsername"),
-                new SnippetPermissionGrantResponse(snippet2.getId(), "mockUsername"));
+    List<GrantResponse> relationships =
+        List.of(
+            new GrantResponse(snippet1.getId(), "mockUsername"),
+            new GrantResponse(snippet2.getId(), "mockUsername"));
 
-        when(permissionsManagerHandler.getSnippetRelationships(anyString(), anyString()))
-                .thenReturn(Response.withData(relationships));
+    when(permissionsManagerHandler.getSnippetRelationships(anyString(), anyString()))
+        .thenReturn(Response.withData(relationships));
 
-        when(bucketHandler.get(anyString(), anyString())).thenReturn(Response.withData("print('Hello World!')"));
+    when(bucketHandler.get(anyString(), anyString()))
+        .thenReturn(Response.withData("print('Hello World!')"));
 
-        // Call the getAccessibleSnippets method
-        Response<PaginationAndDetails> response = snippetService.getAccessibleSnippets(mockToken, "relation", 0, 10,
-                "Title");
+    // Call the getAccessibleSnippets method
+    Response<PaginationAndDetails> response =
+        snippetService.getAccessibleSnippets(mockToken, "relation", 0, 10, "Title");
 
-        // Verify the response
-        assertNotNull(response.getData());
-        assertEquals(2, response.getData().getSnippetCodeDetails().size());
+    // Verify the response
+    assertNotNull(response.getData());
+    assertEquals(2, response.getData().getSnippetCodeDetails().size());
 
-        SnippetCodeDetails snippetDetails1 = response.getData().getSnippetCodeDetails().getFirst();
-        assertEquals("Title", snippetDetails1.getTitle());
-        assertEquals("print('Hello World!')", snippetDetails1.getCode());
-        assertEquals("Description", snippetDetails1.getDescription());
-        assertEquals("printscript", snippetDetails1.getLanguage());
-        assertEquals("ps", snippetDetails1.getExtension());
-        assertEquals(Snippet.Status.IN_PROGRESS, snippetDetails1.getLintStatus());
-        assertEquals("mockUsername", snippetDetails1.getAuthor());
+    SnippetCodeDetails snippetDetails1 = response.getData().getSnippetCodeDetails().getFirst();
+    assertEquals("Title", snippetDetails1.getTitle());
+    assertEquals("print('Hello World!')", snippetDetails1.getCode());
+    assertEquals("Description", snippetDetails1.getDescription());
+    assertEquals("printscript", snippetDetails1.getLanguage());
+    assertEquals("ps", snippetDetails1.getExtension());
+    assertEquals(Snippet.Status.IN_PROGRESS, snippetDetails1.getLintStatus());
+    assertEquals("mockUsername", snippetDetails1.getAuthor());
 
-        SnippetCodeDetails snippetDetails2 = response.getData().getSnippetCodeDetails().get(1);
-        assertEquals("Title", snippetDetails2.getTitle());
-        assertEquals("print('Hello World!')", snippetDetails2.getCode());
-        assertEquals("Description", snippetDetails2.getDescription());
-        assertEquals("printscript", snippetDetails2.getLanguage());
-        assertEquals("ps", snippetDetails2.getExtension());
-        assertEquals(Snippet.Status.IN_PROGRESS, snippetDetails2.getLintStatus());
-        assertEquals("mockUsername", snippetDetails2.getAuthor());
-    }
+    SnippetCodeDetails snippetDetails2 = response.getData().getSnippetCodeDetails().get(1);
+    assertEquals("Title", snippetDetails2.getTitle());
+    assertEquals("print('Hello World!')", snippetDetails2.getCode());
+    assertEquals("Description", snippetDetails2.getDescription());
+    assertEquals("printscript", snippetDetails2.getLanguage());
+    assertEquals("ps", snippetDetails2.getExtension());
+    assertEquals(Snippet.Status.IN_PROGRESS, snippetDetails2.getLintStatus());
+    assertEquals("mockUsername", snippetDetails2.getAuthor());
+  }
 
-    @Test
-    void testGetSnippetUsersSuccess() {
-        // Mock the successful response
-        PaginatedUsers paginatedUsers = new PaginatedUsers();
-        Response<PaginatedUsers> mockSuccessResponse = Response.withData(paginatedUsers);
-        when(permissionsManagerHandler.getSnippetUsers(anyString(), anyString(), anyInt(), anyInt()))
-                .thenReturn(mockSuccessResponse);
+  @Test
+  void testGetSnippetUsersSuccess() {
+    // Mock the successful response
+    PaginatedUsers paginatedUsers = new PaginatedUsers();
+    Response<PaginatedUsers> mockSuccessResponse = Response.withData(paginatedUsers);
+    when(permissionsManagerHandler.getSnippetUsers(anyString(), anyString(), anyInt(), anyInt()))
+        .thenReturn(mockSuccessResponse);
 
-        // Call the method
-        Response<PaginatedUsers> response = snippetService.getSnippetUsers("mockToken", "prefix", 0, 10);
+    // Call the method
+    Response<PaginatedUsers> response =
+        snippetService.getSnippetUsers("mockToken", "prefix", 0, 10);
 
-        // Verify the response
-        assertFalse(response.isError());
-        assertNotNull(response.getData());
-        assertEquals(paginatedUsers, response.getData());
-    }
+    // Verify the response
+    assertFalse(response.isError());
+    assertNotNull(response.getData());
+    assertEquals(paginatedUsers, response.getData());
+  }
 }

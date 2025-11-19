@@ -1,6 +1,5 @@
 package ingsis.snippet.dto;
 
-
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,9 +9,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class ShareSnippetDTO {
-    @NotBlank(message = "Snippet ID is required")
-    private String snippetId;
+  @NotBlank(message = "Snippet ID is required")
+  private String snippetId;
 
-    @NotBlank(message = "Username is required")
-    private String username;
+  @NotBlank(message = "Username is required")
+  private String username;
 }
