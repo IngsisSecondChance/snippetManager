@@ -2,7 +2,6 @@ package ingsis.snippet.services;
 
 import static ingsis.snippet.utils.Utils.getViolationsMessageError;
 
-import ingsis.snippet.dto.FormatConfigDTO;
 import ingsis.snippet.entities.FormatConfig;
 import ingsis.snippet.entities.LintConfig;
 import ingsis.snippet.errorDTO.Error;
@@ -10,7 +9,6 @@ import ingsis.snippet.errorDTO.Error;
 import java.io.IOException;
 import java.util.Set;
 
-import ingsis.snippet.dto.LintingConfigDTO;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.repositories.FormatConfigRepository;
 import ingsis.snippet.repositories.LintingConfigRepository;
@@ -20,7 +18,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
+import DTO.FormatConfigDTO;
+import DTO.LintingConfigDTO;
+import Utils.FormatSerializer;
+import Utils.LintSerializer;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

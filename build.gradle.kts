@@ -20,12 +20,24 @@ java {
 
 repositories {
     mavenCentral()
+
+    // 1) Repo de redis-streams (austral-ingsis)
     maven {
-        name = "GitHubPackages"
+        name = "GitHubPackagesAustral"
         url = uri("https://maven.pkg.github.com/austral-ingsis/class-redis-streams")
         credentials {
-            username = (project.findProperty("gpr.user") as String?) ?: System.getenv("USERNAME")
-            password = (project.findProperty("gpr.key") as String?) ?: System.getenv("TOKEN")
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
+        }
+    }
+
+    // 2) Repo del serializer (sonpipe0/spring-serializer)
+    maven {
+        name = "GitHubPackagesSerializer"
+        url = uri("https://maven.pkg.github.com/sonpipe0/spring-serializer")
+        credentials {
+            username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+            password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
         }
     }
 }
@@ -50,10 +62,17 @@ dependencies {
     // --- Spring Cloud ---
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
-    // --- Redis básico ---
+    // --- Redis ---
+    // Sincrónico
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
+    // Reactivo (para ReactiveRedisTemplate y la lib de redis-streams que usabas antes)
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 
+    // Lib de streams de Austral
     implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
+
+    // Serializer viejo (FormatSerializer, LintSerializer, etc.)
+    implementation("org.printScript.microservices:serializer:1.0.15")
 
     // --- Seguridad ---
     implementation("org.springframework.boot:spring-boot-starter-security")

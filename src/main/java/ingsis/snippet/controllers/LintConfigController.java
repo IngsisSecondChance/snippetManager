@@ -3,7 +3,7 @@ package ingsis.snippet.controllers;
 import java.io.IOException;
 import java.util.Map;
 
-import ingsis.snippet.dto.LintingConfigDTO;
+import DTO.LintingConfigDTO;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.services.ConfigService;
 import ingsis.snippet.utils.TokenUtils;

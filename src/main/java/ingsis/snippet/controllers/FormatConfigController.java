@@ -4,7 +4,7 @@ package ingsis.snippet.controllers;
 import java.io.IOException;
 import java.util.Map;
 
-import ingsis.snippet.dto.FormatConfigDTO;
+import DTO.FormatConfigDTO;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.services.ConfigService;
 import ingsis.snippet.utils.TokenUtils;
