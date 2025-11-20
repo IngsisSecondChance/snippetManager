@@ -1,6 +1,5 @@
 package ingsis.snippet.config;
 
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,12 +8,12 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 
 @Configuration
 public class ConnectionFactory {
-
     private final String hostName;
     private final int port;
 
-    public ConnectionFactory(@Value("${spring.data.redis.host}") String hostName,
-                             @Value("${spring.data.redis.port}") int port) {
+    public ConnectionFactory(
+            @Value("${spring.data.redis.host}") String hostName,
+            @Value("${spring.data.redis.port}") int port) {
         this.hostName = hostName;
         this.port = port;
     }
