@@ -19,12 +19,16 @@ spring:
         jwt:
           issuer-uri: ${AUTH0_ISSUER}
 
+  # ===== Redis (local por defecto, pero se puede overridear con env vars) =====
+  data:
+    redis:
+      host: ${SPRING_DATA_REDIS_HOST:localhost}
+      port: ${SPRING_DATA_REDIS_PORT:6379}
+
 server:
   port: 8081
 
-# ===== Auth0 =====
 auth0:
-  # usa valores de entorno si existen, o defaults seguros si no (para CI/tests)
   issuer: https://${AUTH_SERVER_URI}/
   audience: ${AUTH0_AUDIENCE}
 

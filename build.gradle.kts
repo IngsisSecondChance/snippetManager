@@ -31,7 +31,7 @@ repositories {
 }
 
 dependencies {
-    //---auth0---
+    // --- Auth0 / JWT ---
     implementation("com.auth0:java-jwt:4.4.0")
 
     // --- Spring Boot starters ---
@@ -50,10 +50,12 @@ dependencies {
     // --- Spring Cloud ---
     implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
-    // --- Redis ---
+    // --- Redis básico ---
     implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
-    // --- Security ---
+    implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
+
+    // --- Seguridad ---
     implementation("org.springframework.boot:spring-boot-starter-security")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.security:spring-security-oauth2-jose")
@@ -65,7 +67,8 @@ dependencies {
 
     // --- Database ---
     runtimeOnly("org.postgresql:postgresql")
-    // H2 para tests (resolve org.h2.Driver y la URL jdbc:h2:...)
+
+    // H2 para tests
     testImplementation("com.h2database:h2")
 
     // --- Testing ---
