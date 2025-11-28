@@ -4,53 +4,31 @@ services:
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB:-snippetdb}
+      POSTGRES_DB: ${POSTGRES_DB}
     ports:
-      - "${POSTGRES_PORT:-5434}:5432"
+      - "${POSTGRES_PORT}:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB:-snippetdb}"]
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}" ]
       interval: 5s
       timeout: 5s
       retries: 10
 
   redis:
-    image: redis:7-alpine
-    command: ["redis-server", "--appendonly", "yes"]
+    image: redis:7
+    container_name: redis
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
-  snippet:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    environment:
-      # Perfil Docker
-      SPRING_PROFILES_ACTIVE: docker
-
-      # DB
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DB:-snippetdb}
-      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER}
-      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD}
-
-      # Auth0
-      AUTH_SERVER_URI: ${AUTH_SERVER_URI}
-      AUTH0_AUDIENCE: ${AUTH0_AUDIENCE}
-      AUTH0_ISSUER: ${AUTH0_ISSUER}
-
-      # Redis – dentro de Docker el host es el nombre del servicio
-      SPRING_DATA_REDIS_HOST: redis
-      SPRING_DATA_REDIS_PORT: 6379
-
+  snippet-manager:
+    build: .
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-
+      - postgres
+    env_file:
+      - .env
     ports:
       - "8081:8081"
+
+volumes:
+  postgres-data:

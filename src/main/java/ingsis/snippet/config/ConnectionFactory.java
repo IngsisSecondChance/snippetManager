@@ -8,18 +8,18 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 
 @Configuration
 public class ConnectionFactory {
-    private final String hostName;
-    private final int port;
+  private final String hostName;
+  private final int port;
 
-    public ConnectionFactory(
-            @Value("${spring.data.redis.host}") String hostName,
-            @Value("${spring.data.redis.port}") int port) {
-        this.hostName = hostName;
-        this.port = port;
-    }
+  public ConnectionFactory(
+      @Value("${spring.data.redis.host}") String hostName,
+      @Value("${spring.data.redis.port}") int port) {
+    this.hostName = hostName;
+    this.port = port;
+  }
 
-    @Bean
-    public LettuceConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(new RedisStandaloneConfiguration(hostName, port));
-    }
+  @Bean
+  public LettuceConnectionFactory redisConnectionFactory() {
+    return new LettuceConnectionFactory(new RedisStandaloneConfiguration(hostName, port));
+  }
 }
