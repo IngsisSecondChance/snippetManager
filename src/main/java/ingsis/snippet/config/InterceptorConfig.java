@@ -8,11 +8,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class InterceptorConfig implements WebMvcConfigurer {
-    @Autowired
-    private DefaultConfigGenerator defaultConfigGenerator;
+  @Autowired private DefaultConfigGenerator defaultConfigGenerator;
 
-    @Override
-    public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(defaultConfigGenerator);
-    }
+  @Override
+  public void addInterceptors(InterceptorRegistry registry) {
+    registry.addInterceptor(defaultConfigGenerator);
+  }
 }

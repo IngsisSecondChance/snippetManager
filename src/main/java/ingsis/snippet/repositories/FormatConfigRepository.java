@@ -1,8 +1,6 @@
 package ingsis.snippet.repositories;
 
+import ingsis.snippet.entities.FormatConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import ingsis.snippet.entities.FormatConfig;
-
-public interface FormatConfigRepository extends JpaRepository<FormatConfig, String> {
-}
+public interface FormatConfigRepository extends JpaRepository<FormatConfig, String> {}
