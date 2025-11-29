@@ -134,3 +134,8 @@ tasks.test {
     useJUnitPlatform()
     exclude("**/SnippetApplicationTests.class")
 }
+configurations {
+    all {
+        exclude(group = "org.springframework.boot", module = "spring-boot-reactor")
+    }
+}

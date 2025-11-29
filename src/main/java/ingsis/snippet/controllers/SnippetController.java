@@ -190,6 +190,16 @@ public class SnippetController {
     }
   }
 
+  @GetMapping("/get/formatted")
+  public ResponseEntity<Object> getFormattedSnippet(@RequestParam String snippetId,
+                                                    @RequestHeader("Authorization") String token) {
+    Response<String> response = snippetService.getFormattedFile(snippetId, token);
+    if (response.isError()) {
+      return new ResponseEntity<>(response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+    }
+    return ResponseEntity.ok(response.getData());
+  }
+
   @GetMapping("/details")
   public ResponseEntity<Object> getSnippetDetails(
       @RequestParam String snippetId, @RequestHeader("Authorization") String token) {

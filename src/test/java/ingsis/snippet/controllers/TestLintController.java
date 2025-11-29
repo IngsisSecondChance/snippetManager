@@ -1,4 +1,3 @@
-/*
 package ingsis.snippet.controllers;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -6,6 +5,15 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import DTO.LintingConfigDTO;
+import ingsis.snippet.TestSecurityConfig;
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.FormatProducer;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
+import ingsis.snippet.services.ConfigService;
+import ingsis.snippet.services.SnippetServiceTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,14 +26,17 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-
-
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
 @Import(TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TestLintController {
+    @MockBean
+    private LintProducer lintProducer;
+
+    @MockBean
+    private FormatProducer formatProducer;
 
     @MockBean
     private StatusConsumer statusConsumer;
@@ -77,5 +88,3 @@ public class TestLintController {
         assertEquals(500, lintConfigController.getLintingConfig(token).getStatusCode().value());
     }
 }
-
- */

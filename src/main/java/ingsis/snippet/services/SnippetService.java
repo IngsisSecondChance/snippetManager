@@ -344,6 +344,35 @@ public class SnippetService {
     return response;
   }
 
+  public Response<String> getFormattedFile(String snippetId, String token) {
+    log.info("getFormattedFile was called");
+    Response<String> permissionsResponse = permissionsManagerHandler.checkPermissions(snippetId, token,
+            "/snippets/has-access");
+    if (permissionsResponse.isError())
+      return permissionsResponse;
+
+    Optional<Snippet> snippetOptional = snippetRepository.findById(snippetId);
+    if (snippetOptional.isEmpty()) {
+      return Response.withError(new Error<>(404, "Snippet not found"));
+    }
+
+    Snippet snippet = snippetOptional.get();
+    if (snippet.getFormatStatus() == Snippet.Status.IN_PROGRESS) {
+      return Response.withError(new Error<>(400, "Format is in progress"));
+    }
+
+    Response<String> response;
+    try {
+      response = bucketHandler.get("formatted/" + snippetId, token);
+      if (response.isError()) {
+        return response;
+      }
+    } catch (Exception e) {
+      return Response.withError(new Error<>(500, "Internal Server Error"));
+    }
+    return Response.withData(response.getData());
+  }
+
   public Response<PaginationAndDetails> getAccessibleSnippets(
       String token, String relation, Integer page, Integer pageSize, String name) {
     log.info("getAccessibleSnippets was called");

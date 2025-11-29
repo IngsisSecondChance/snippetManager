@@ -1,12 +1,15 @@
-/*
 package ingsis.snippet.controllers;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-
 import org.junit.jupiter.api.BeforeEach;
+
+import DTO.FormatConfigDTO;
+import ingsis.snippet.TestSecurityConfig;
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.FormatProducer;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
+import ingsis.snippet.services.ConfigService;
+import ingsis.snippet.services.SnippetServiceTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -18,6 +21,10 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -25,9 +32,19 @@ import org.springframework.test.context.ActiveProfiles;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TestFormatController {
+    @MockBean
+    private LintProducer lintProducer;
 
+    @MockBean
+    private StatusConsumer statusConsumer;
+
+    @MockBean
+    private FormatProducer formatProducer;
 
     String token;
+
+    @Autowired
+    private FormatConfigController formatConfigController;
 
     @MockBean
     private ConfigService configService;
@@ -54,7 +71,7 @@ public class TestFormatController {
         assertEquals(200, formatConfigController.putFormatConfig(formatConfigDTO, token).getStatusCode().value());
 
         when(configService.putFormatConfig(formatConfigDTO, "mockUserId", token))
-                .thenReturn(Response.withError(new Error(400, "error")));
+                .thenReturn(Response.withError(new Error<>(400, "error")));
 
         assertEquals(400, formatConfigController.putFormatConfig(formatConfigDTO, token).getStatusCode().value());
     }
@@ -76,9 +93,8 @@ public class TestFormatController {
         assertEquals(formatConfigDTO, formatConfigController.getFormatConfig(token).getBody());
 
         when(configService.getFormatConfig("mockUserId", token))
-                .thenReturn(Response.withError(new Error(400, "error")));
+                .thenReturn(Response.withError(new Error<>(400, "error")));
 
         assertEquals(400, formatConfigController.getFormatConfig(token).getStatusCode().value());
     }
 }
-*/
