@@ -9,7 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
+    env: # para que gradle pueda acceder a los otros repos
+      USERNAME: ${{ secrets.GPR_USER_SECRET }}
+      TOKEN: ${{ secrets.GPR_KEY_SECRET }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,9 +30,6 @@ jobs:
 
       - name: Checkstyle (linter)
         run: ./gradlew checkstyleMain checkstyleTest --no-daemon
-        env: # para que gradle pueda acceder a los otros repos
-          USERNAME: ${{ secrets.GPR_USER_SECRET }}
-          TOKEN: ${{ secrets.GPR_KEY_SECRET }}
 
       - name: Build & Test
         run: ./gradlew clean test --no-daemon
