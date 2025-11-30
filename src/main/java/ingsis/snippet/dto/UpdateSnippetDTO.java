@@ -50,12 +50,17 @@ public class UpdateSnippetDTO {
     if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    UpdateSnippetDTO updateSnippetDTO = (UpdateSnippetDTO) obj;
-    return snippetId.equals(updateSnippetDTO.snippetId)
-        && title.equals(updateSnippetDTO.title)
-        && description.equals(updateSnippetDTO.description)
-        && language.equals(updateSnippetDTO.language)
-        && extension.equals(updateSnippetDTO.extension)
-        && code.equals(updateSnippetDTO.code);
+    UpdateSnippetDTO other = (UpdateSnippetDTO) obj;
+    return java.util.Objects.equals(snippetId, other.snippetId)
+        && java.util.Objects.equals(title, other.title)
+        && java.util.Objects.equals(description, other.description)
+        && java.util.Objects.equals(language, other.language)
+        && java.util.Objects.equals(extension, other.extension)
+        && java.util.Objects.equals(code, other.code);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(snippetId, title, description, language, extension, code);
   }
 }
