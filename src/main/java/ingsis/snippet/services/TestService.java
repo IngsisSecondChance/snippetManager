@@ -52,7 +52,9 @@ public class TestService {
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/can-edit");
-    if (permissionsResponse.isError()) return permissionsResponse;
+    if (permissionsResponse.isError()) {
+      return permissionsResponse;
+    }
 
     Optional<Snippet> snippet = snippetRepository.findById(snippetId);
     if (snippet.isEmpty()) {
@@ -108,8 +110,12 @@ public class TestService {
                   testDTO.setTitle(test.getTitle());
                   testDTO.setInputQueue(splitTopLevel(test.getInputs(), "("));
                   testDTO.setOutputQueue(splitTopLevel(test.getExpectedOutputs(), "("));
-                  if (test.getInputs().equals("")) testDTO.setInputQueue(List.of());
-                  if (test.getExpectedOutputs().equals("")) testDTO.setOutputQueue(List.of());
+                  if (test.getInputs().equals("")) {
+                    testDTO.setInputQueue(List.of());
+                  }
+                  if (test.getExpectedOutputs().equals("")) {
+                    testDTO.setOutputQueue(List.of());
+                  }
                   return testDTO;
                 })
             .collect(Collectors.toList());
@@ -121,12 +127,18 @@ public class TestService {
     log.info("splitTopLevel was called");
     List<String> result = new ArrayList<>();
     int level = 0;
-    if (str.isEmpty()) return List.of();
+    if (str.isEmpty()) {
+      return List.of();
+    }
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < str.length(); i++) {
       char c = str.charAt(i);
-      if (c == '(') level++;
-      if (c == ')') level--;
+      if (c == '(') {
+        level++;
+      }
+      if (c == ')') {
+        level--;
+      }
       if (level == 0 && str.startsWith(delimiter, i)) {
         result.add(sb.toString());
         sb.setLength(0);
@@ -161,7 +173,9 @@ public class TestService {
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/can-edit");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     test.get().setTitle(testDTO.getTitle());
     test.get()
@@ -194,7 +208,9 @@ public class TestService {
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/can-edit");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     try {
       testRepository.delete(test.get());
@@ -215,7 +231,9 @@ public class TestService {
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     log.info(
         "testDTO: {}, {}, {}, {}",
@@ -226,7 +244,9 @@ public class TestService {
     Response<Void> printScriptResponse =
         printScriptServiceHandler.executeTest(
             snippetId, "1.1", testDTO.getInputQueue(), testDTO.getOutputQueue(), token);
-    if (printScriptResponse.isError()) return Response.withError(printScriptResponse.getError());
+    if (printScriptResponse.isError()) {
+      return Response.withError(printScriptResponse.getError());
+    }
 
     return Response.withData(null);
   }

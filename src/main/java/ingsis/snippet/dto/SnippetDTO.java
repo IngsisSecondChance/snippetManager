@@ -1,7 +1,6 @@
 package ingsis.snippet.dto;
 
 import jakarta.validation.constraints.NotBlank;
-import java.util.Objects;
 import lombok.*;
 
 @Getter
@@ -40,11 +39,16 @@ public class SnippetDTO {
     if (obj == null || getClass() != obj.getClass()) {
       return false;
     }
-    SnippetDTO snippetDTO = (SnippetDTO) obj;
-    return Objects.equals(title, snippetDTO.title)
-        && Objects.equals(description, snippetDTO.description)
-        && Objects.equals(language, snippetDTO.language)
-        && Objects.equals(extension, snippetDTO.extension)
-        && Objects.equals(code, snippetDTO.code);
+    SnippetDTO other = (SnippetDTO) obj;
+    return java.util.Objects.equals(title, other.title)
+        && java.util.Objects.equals(description, other.description)
+        && java.util.Objects.equals(language, other.language)
+        && java.util.Objects.equals(extension, other.extension)
+        && java.util.Objects.equals(code, other.code);
+  }
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(title, description, language, extension, code);
   }
 }
