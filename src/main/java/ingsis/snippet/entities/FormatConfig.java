@@ -11,6 +11,5 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 public class FormatConfig {
-    @Id
-    private String id;
+  @Id private String id;
 }

@@ -346,10 +346,9 @@ public class SnippetService {
 
   public Response<String> getFormattedFile(String snippetId, String token) {
     log.info("getFormattedFile was called");
-    Response<String> permissionsResponse = permissionsManagerHandler.checkPermissions(snippetId, token,
-            "/snippets/has-access");
-    if (permissionsResponse.isError())
-      return permissionsResponse;
+    Response<String> permissionsResponse =
+        permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
+    if (permissionsResponse.isError()) return permissionsResponse;
 
     Optional<Snippet> snippetOptional = snippetRepository.findById(snippetId);
     if (snippetOptional.isEmpty()) {
@@ -431,5 +430,33 @@ public class SnippetService {
     PaginationAndDetails paginationAndDetails =
         new PaginationAndDetails(pageNum, size, relationships.size(), snippetDetails);
     return Response.withData(paginationAndDetails);
+  }
+
+  public Response<String> getFormattedFile(String snippetId, String token) {
+    log.info("getFormattedFile was called");
+    Response<String> permissionsResponse =
+        permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
+    if (permissionsResponse.isError()) return permissionsResponse;
+
+    Optional<Snippet> snippetOptional = snippetRepository.findById(snippetId);
+    if (snippetOptional.isEmpty()) {
+      return Response.withError(new Error<>(404, "Snippet not found"));
+    }
+
+    Snippet snippet = snippetOptional.get();
+    if (snippet.getFormatStatus() == Snippet.Status.IN_PROGRESS) {
+      return Response.withError(new Error<>(400, "Format is in progress"));
+    }
+
+    Response<String> response;
+    try {
+      response = bucketHandler.get("formatted/" + snippetId, token);
+      if (response.isError()) {
+        return response;
+      }
+    } catch (Exception e) {
+      return Response.withError(new Error<>(500, "Internal Server Error"));
+    }
+    return Response.withData(response.getData());
   }
 }

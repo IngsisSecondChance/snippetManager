@@ -306,7 +306,7 @@ public class TestSnippetController {
     assertEquals("println(1)", snippetController.getFormattedSnippet("id1", token).getBody());
 
     when(snippetService.getFormattedFile("id1", token))
-            .thenReturn(Response.withError(new Error<>(400, "error")));
+        .thenReturn(Response.withError(new Error<>(400, "error")));
 
     assertEquals(400, snippetController.getFormattedSnippet("id1", token).getStatusCode().value());
   }

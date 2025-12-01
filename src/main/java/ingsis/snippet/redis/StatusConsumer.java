@@ -1,8 +1,10 @@
 package ingsis.snippet.redis;
 
-
+import events.ConfigPublishEvent;
+import events.StatusPublishEvent;
+import ingsis.snippet.entities.Snippet;
+import ingsis.snippet.repositories.SnippetRepository;
 import java.time.Duration;
-
 import org.austral.ingsis.redis.RedisStreamConsumer;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
@@ -14,63 +16,65 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.stream.StreamReceiver;
 import org.springframework.stereotype.Component;
 
-import ingsis.snippet.entities.Snippet;
-import ingsis.snippet.repositories.SnippetRepository;
-import events.ConfigPublishEvent;
-import events.StatusPublishEvent;
-
 @Component
 public class StatusConsumer extends RedisStreamConsumer<StatusPublishEvent> {
 
-    private static final Logger logger = LoggerFactory.getLogger(StatusConsumer.class);
+  private static final Logger logger = LoggerFactory.getLogger(StatusConsumer.class);
 
-    @Autowired
-    SnippetRepository snippetRepository;
+  @Autowired SnippetRepository snippetRepository;
 
-    public StatusConsumer(RedisTemplate<String, String> redis,
-                          @Value("${stream.redis.stream.status.key}") String streamKey,
-                          @Value("${stream.redis.consumer.group}") String consumerGroup) {
-        super(streamKey, consumerGroup, redis);
+  public StatusConsumer(
+      RedisTemplate<String, String> redis,
+      @Value("${stream.redis.stream.status.key}") String streamKey,
+      @Value("${stream.redis.consumer.group}") String consumerGroup) {
+    super(streamKey, consumerGroup, redis);
+  }
+
+  @Override
+  protected synchronized void onMessage(
+      @NotNull ObjectRecord<String, StatusPublishEvent> objectRecord) {
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      throw new RuntimeException(e);
     }
+    StatusPublishEvent event = objectRecord.getValue();
+    String snippetId = event.getSnippetId();
+    String userId = event.getUserId();
+    ConfigPublishEvent.ConfigType type = event.getType();
+    StatusPublishEvent.StatusType status = event.getStatus();
 
-    @Override
-    protected synchronized void onMessage(@NotNull ObjectRecord<String, StatusPublishEvent> objectRecord) {
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        StatusPublishEvent event = objectRecord.getValue();
-        String snippetId = event.getSnippetId();
-        String userId = event.getUserId();
-        ConfigPublishEvent.ConfigType type = event.getType();
-        StatusPublishEvent.StatusType status = event.getStatus();
+    snippetRepository
+        .findById(snippetId)
+        .ifPresent(
+            snippet -> {
+              switch (type) {
+                case LINT:
+                  snippet.setLintStatus(translateStatus(status));
+                  break;
+                case FORMAT:
+                  snippet.setFormatStatus(translateStatus(status));
+                  break;
+              }
+              snippetRepository.save(snippet);
+            });
 
-        snippetRepository.findById(snippetId).ifPresent(snippet -> {
-            switch (type) {
-                case LINT :
-                    snippet.setLintStatus(translateStatus(status));
-                    break;
-                case FORMAT :
-                    snippet.setFormatStatus(translateStatus(status));
-                    break;
-            }
-            snippetRepository.save(snippet);
-        });
+    logger.info("Updated snippet with id: " + snippetId + " and user id: " + userId);
+  }
 
-        logger.info("Updated snippet with id: " + snippetId + " and user id: " + userId);
-    }
+  private Snippet.Status translateStatus(StatusPublishEvent.StatusType status) {
+    return status == StatusPublishEvent.StatusType.COMPLIANT
+        ? Snippet.Status.COMPLIANT
+        : Snippet.Status.NON_COMPLIANT;
+  }
 
-    private Snippet.Status translateStatus(StatusPublishEvent.StatusType status) {
-        return status == StatusPublishEvent.StatusType.COMPLIANT
-                ? Snippet.Status.COMPLIANT
-                : Snippet.Status.NON_COMPLIANT;
-    }
-
-    @NotNull
-    @Override
-    protected StreamReceiver.StreamReceiverOptions<String, ObjectRecord<String, StatusPublishEvent>> options() {
-        return StreamReceiver.StreamReceiverOptions.builder().pollTimeout(Duration.ofSeconds(5))
-                .targetType(StatusPublishEvent.class).build();
-    }
+  @NotNull
+  @Override
+  protected StreamReceiver.StreamReceiverOptions<String, ObjectRecord<String, StatusPublishEvent>>
+      options() {
+    return StreamReceiver.StreamReceiverOptions.builder()
+        .pollTimeout(Duration.ofSeconds(5))
+        .targetType(StatusPublishEvent.class)
+        .build();
+  }
 }

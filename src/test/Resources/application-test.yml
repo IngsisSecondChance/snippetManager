@@ -1,9 +1,7 @@
-server:
-  port: 8080
-
 spring:
-  main:
-    allow-bean-definition-overriding: true
+  application:
+    name: snippet-manager-test
+
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
@@ -14,21 +12,44 @@ spring:
     properties:
       hibernate:
         format_sql: false
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: "http://dummy-issuer-uri"
-          client-id: "client-id"
-          client-secret: "client-secret"
+          # En tests no se usa de verdad gracias a TestSecurityConfig,
+          # pero dejamos algo para que no falte la propiedad.
+          issuer-uri: https://dummy-issuer/
+
+# ===== Auth0 dummy para tests =====
+auth0:
+  issuer: https://dummy-issuer/
+  audience: dummy-audience
+
+# ===== Redis Streams placeholders =====
 stream:
   redis:
     stream:
       lint:
-        key: lint
+        key: snippet-lint-test
       status:
-        key: status
+        key: snippet-status-test
     consumer:
-      group: snippet-service
-auth0:
-  audience: "audience"
+      group: snippet-consumer-group-test
+
+server:
+  port: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,mappings
+  endpoint:
+    health:
+      show-details: always

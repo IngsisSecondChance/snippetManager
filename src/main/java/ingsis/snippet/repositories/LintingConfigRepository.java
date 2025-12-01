@@ -1,8 +1,6 @@
 package ingsis.snippet.repositories;
 
+import ingsis.snippet.entities.LintConfig;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import ingsis.snippet.entities.LintConfig;
-
-public interface LintingConfigRepository extends JpaRepository<LintConfig, String> {
-}
+public interface LintingConfigRepository extends JpaRepository<LintConfig, String> {}
