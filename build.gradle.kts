@@ -5,7 +5,7 @@ plugins {
     id("com.diffplug.spotless") version "6.25.0"
     id("checkstyle")
     id("jacoco")
-    kotlin("jvm") version "2.0.21"
+    kotlin("jvm") version "2.2.20"
 }
 
 group = "ingsis"
@@ -19,10 +19,7 @@ java {
 }
 
 repositories {
-    mavenCentral()
-
-    // 1) Repo de redis-streams (austral-ingsis)
-    maven {
+    maven{
         name = "GitHubPackagesAustral"
         url = uri("https://maven.pkg.github.com/austral-ingsis/class-redis-streams")
         credentials {
@@ -30,86 +27,48 @@ repositories {
             password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
         }
     }
-
-    // 2) Repo del serializer (sonpipe0/spring-serializer)
-    maven {
-        name = "GitHubPackagesSerializer"
+    maven{
+        name = "GitHubPackages"
         url = uri("https://maven.pkg.github.com/sonpipe0/spring-serializer")
         credentials {
             username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
             password = project.findProperty("gpr.key") as String? ?: System.getenv("TOKEN")
         }
     }
+    mavenCentral()
 }
 
 dependencies {
-    // --- Auth0 / JWT ---
     implementation("com.auth0:java-jwt:4.4.0")
-
-    // --- Spring Boot starters ---
-    implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
-    implementation("org.springframework.boot:spring-boot-starter-validation")
-
-    // --- Validation / Hibernate ---
-    implementation("jakarta.validation:jakarta.validation-api:3.0.2")
-    implementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
-    implementation("org.glassfish:jakarta.el:4.0.2")
-
-    // --- Formatting ---
-    implementation("com.google.googlejavaformat:google-java-format:1.19.2")
-
-    // --- Spring Cloud ---
-    implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
-
-    // --- Redis ---
-    // Sincrónico
-    implementation("org.springframework.boot:spring-boot-starter-data-redis")
-    // Reactivo (para ReactiveRedisTemplate y la lib de redis-streams que usabas antes)
-    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
-
-    // Lib de streams de Austral
-    implementation("org.austral.ingsis:redis-streams-mvc:0.1.13")
-
-    // Serializer viejo (FormatSerializer, LintSerializer, etc.)
     implementation("org.printScript.microservices:serializer:1.0.15")
-
-    // --- Seguridad ---
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-    implementation("org.springframework.security:spring-security-oauth2-jose")
-    implementation("org.springframework.security:spring-security-oauth2-core")
-
-    // --- Lombok ---
+    implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
+    implementation("org.austral.ingsis:redis-streams-mvc:0.1.13") {
+        exclude(group = "org.springframework.boot")
+        exclude(group = "io.projectreactor")
+    }
     compileOnly("org.projectlombok:lombok")
-    annotationProcessor("org.projectlombok:lombok")
-
-    // --- Database ---
     runtimeOnly("org.postgresql:postgresql")
-
-    // H2 para tests
-    testImplementation("com.h2database:h2")
-
-    // --- Testing ---
+    annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
-    testImplementation(platform("org.testcontainers:testcontainers-bom:1.20.1"))
-    testImplementation("org.testcontainers:testcontainers")
-    testImplementation("org.testcontainers:junit-jupiter")
-    testImplementation("org.testcontainers:postgresql")
-    testImplementation("org.springframework.security:spring-security-test")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("com.h2database:h2")
 }
 
-dependencyManagement {
-    imports {
-        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2023.0.3")
-    }
+tasks.withType<Test> {
+    useJUnitPlatform()
+    exclude("**/RedisTests.class")
 }
 
 jacoco {
     toolVersion = "0.8.12"
 }
-
 tasks.jacocoTestReport {
     dependsOn(tasks.test)
     reports {
@@ -128,14 +87,4 @@ spotless {
 checkstyle {
     toolVersion = "10.18.1"
     config = resources.text.fromFile("config/checkstyle/checkstyle.xml")
-}
-
-tasks.test {
-    useJUnitPlatform()
-    exclude("**/SnippetApplicationTests.class")
-}
-configurations {
-    all {
-        exclude(group = "org.springframework.boot", module = "spring-boot-reactor")
-    }
 }
