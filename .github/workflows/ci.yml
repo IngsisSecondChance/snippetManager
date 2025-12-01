@@ -9,9 +9,11 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     env: # para que gradle pueda acceder a los otros repos
-      USERNAME: ${{ secrets.GPR_USER_SECRET }}
-      TOKEN: ${{ secrets.GPR_KEY_SECRET }}
+      USERNAME: ${{ github.actor }}
+      TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
