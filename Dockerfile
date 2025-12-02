@@ -3,10 +3,13 @@ FROM eclipse-temurin:21-jdk AS builder
 WORKDIR /app
 COPY . .
 
+ARG GPR_USER
+ARG GPR_TOKEN
+ENV USERNAME=$GPR_USER
+ENV TOKEN=$GPR_TOKEN
+
 # Construimos el JAR
-RUN --mount=type=secret,id=gpr_user,env=USERNAME \
-    --mount=type=secret,id=gpr_token,env=TOKEN \
-    ./gradlew clean build -x test -x checkstyleMain -x checkstyleTest
+RUN ./gradlew clean build -x test -x checkstyleMain -x checkstyleTest
 
 FROM eclipse-temurin:21-jre
 

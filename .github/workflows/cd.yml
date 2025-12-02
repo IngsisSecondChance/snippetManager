@@ -33,9 +33,9 @@ jobs:
           context: .
           tags: ghcr.io/ingsis-second-chance/snippet-manager:${{ env.IMAGE_TAG }}
           file: ./Dockerfile
-          secrets: |
-            gpr_user=${{ github.actor }}
-            gpr_token=${{ secrets.GITHUB_TOKEN }}
+          build-args: |
+            GPR_USER=${{ github.actor }}
+            GPR_TOKEN=${{ secrets.GITHUB_TOKEN }}
 
   deploy-to-azure:
     runs-on: ubuntu-latest
