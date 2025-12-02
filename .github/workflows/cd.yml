@@ -92,5 +92,5 @@ jobs:
       - name: Stop VM
         if: always() # Asegura que la VM se apague incluso si el despliegue falla
         run: |
-          az vm stop --resource-group ${{ secrets.AZURE_RG }} --name ${{ env.VM_NAME }} --no-wait
+          az vm deallocate --resource-group ${{ secrets.AZURE_RG }} --name ${{ env.VM_NAME }}
         shell: bash
