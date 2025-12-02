@@ -65,8 +65,7 @@ jobs:
 
       - name: Start VM
         run: |
-          az vm start --resource-group ${{ secrets.AZURE_RG }} --name ${{ env.VM_NAME }} --no-wait
-          sleep 60 # Esperar un tiempo prudencial para que el SSH esté disponible
+          az vm start --resource-group ${{ secrets.AZURE_RG }} --name ${{ env.VM_NAME }}
         shell: bash
 
       - name: Deploy to Azure VM (prod)
