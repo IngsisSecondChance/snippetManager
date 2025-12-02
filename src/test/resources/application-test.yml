@@ -4,9 +4,11 @@ server:
 spring:
   main:
     allow-bean-definition-overriding: true
+
   datasource:
     url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
     driver-class-name: org.h2.Driver
+
   jpa:
     hibernate:
       ddl-auto: create-drop
@@ -14,6 +16,7 @@ spring:
     properties:
       hibernate:
         format_sql: false
+
   security:
     oauth2:
       resourceserver:
@@ -21,6 +24,12 @@ spring:
           issuer-uri: "http://dummy-issuer-uri"
           client-id: "client-id"
           client-secret: "client-secret"
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
 stream:
   redis:
     stream:
@@ -30,5 +39,17 @@ stream:
         key: status
     consumer:
       group: snippet-service
+
 auth0:
   audience: "audience"
+
+# ===== Dummy external service URLs (por si tus @Value usan esto) =====
+BUCKET_URL: "http://localhost:9999/bucket"
+PERMISSIONS_MANAGER_URL: "http://localhost:9999/permissions"
+PRINT_SCRIPT_URL: "http://localhost:9999/printscript"
+
+# ===== Redis Streams keys dummy (por si usás @Value) =====
+STREAM_LINT_KEY: "lint"
+STREAM_FORMAT_KEY: "format"
+STREAM_STATUS_KEY: "status"
+STREAM_CONSUMER_GROUP_SNIPPET: "snippet-consumer-group"

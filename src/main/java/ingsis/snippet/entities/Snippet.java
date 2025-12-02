@@ -1,17 +1,19 @@
 package ingsis.snippet.entities;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 @Table
 @Entity
 @Getter
-@NoArgsConstructor
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class Snippet {
+
   @Id
   @GeneratedValue(strategy = GenerationType.UUID)
   private String id;
@@ -29,14 +31,17 @@ public class Snippet {
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private Status lintStatus;
+  @Builder.Default
+  private Status lintStatus = Status.UNKNOWN;
 
   @Column(nullable = false)
   @Enumerated(EnumType.STRING)
-  private Status formatStatus;
+  @Builder.Default
+  private Status formatStatus = Status.UNKNOWN;
 
   @OneToMany(mappedBy = "snippet", cascade = CascadeType.ALL)
-  private List<Test> tests;
+  @Builder.Default
+  private List<Test> tests = new ArrayList<>();
 
   public enum Status {
     IN_PROGRESS,
