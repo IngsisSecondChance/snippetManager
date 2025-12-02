@@ -138,12 +138,16 @@ public class SnippetService {
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/can-edit");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     if (language.equals("printscript")) {
       Response<String> printScriptResponse =
           printScriptServiceHandler.validateCode(code, "1.1", token);
-      if (printScriptResponse.isError()) return Response.withError(printScriptResponse.getError());
+      if (printScriptResponse.isError()) {
+        return Response.withError(printScriptResponse.getError());
+      }
     }
     Snippet snippet = snippetOptional.get();
     snippet.setTitle(title);
@@ -189,15 +193,21 @@ public class SnippetService {
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     Response<String> authorResponse = permissionsManagerHandler.getSnippetAuthor(snippetId, token);
-    if (authorResponse.isError()) return Response.withError(authorResponse.getError());
+    if (authorResponse.isError()) {
+      return Response.withError(authorResponse.getError());
+    }
 
     Snippet snippet = snippetOpt.get();
 
     Response<String> response = bucketHandler.get("snippets/" + snippetId, token);
-    if (response.isError()) return Response.withError(response.getError());
+    if (response.isError()) {
+      return Response.withError(response.getError());
+    }
 
     String code = response.getData();
     String extension = snippet.getExtension();
@@ -232,7 +242,9 @@ public class SnippetService {
       Response<String> deleteResponse =
           permissionsManagerHandler.deleteRelation(
               snippetId, "/snippets/delete/relationship", token);
-      if (deleteResponse.isError()) return Response.withError(deleteResponse.getError());
+      if (deleteResponse.isError()) {
+        return Response.withError(deleteResponse.getError());
+      }
 
       return Response.withData(null);
     }
@@ -240,12 +252,16 @@ public class SnippetService {
     Response<String> deleteResponse =
         permissionsManagerHandler.deleteRelation(
             snippetId, "/snippets/delete/all-relationships", token);
-    if (deleteResponse.isError()) return Response.withError(deleteResponse.getError());
+    if (deleteResponse.isError()) {
+      return Response.withError(deleteResponse.getError());
+    }
 
     snippetRepository.deleteById(snippetId);
 
     Response<Void> response = bucketHandler.delete("snippets/" + snippetId, token);
-    if (response.isError()) return Response.withError(response.getError());
+    if (response.isError()) {
+      return Response.withError(response.getError());
+    }
 
     return Response.withData(null);
   }
@@ -260,7 +276,9 @@ public class SnippetService {
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(
             shareSnippetDTO.getSnippetId(), token, "/snippets/has-access");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     Response<String> permissionsResponse2 =
         permissionsManagerHandler.shareSnippet(
