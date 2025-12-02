@@ -72,7 +72,7 @@ jobs:
       - name: Deploy to Azure VM (prod)
         if: github.ref_name == 'main'
         run: |
-          ssh -v -o StrictHostKeyChecking=no ingsis@${{ secrets.VM_PROD_IP }} << ENDSSH
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.AZURE_USER }}@${{ secrets.VM_PROD_IP }} << ENDSSH
           cd infra
           docker compose -f docker-compose.prod.yml down snippet-manager
           docker compose -f docker-compose.prod.yml pull snippet-manager
@@ -82,7 +82,7 @@ jobs:
       - name: Deploy to Azure VM (dev)
         if: github.ref_name != 'main'
         run: |
-          ssh -v -o StrictHostKeyChecking=no ingsis@${{ secrets.VM_DEV_IP }} << ENDSSH
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.AZURE_USER }}@${{ secrets.VM_DEV_IP }} << ENDSSH
           cd infra
           docker compose -f docker-compose.dev.yml down snippet-manager
           docker compose -f docker-compose.dev.yml pull snippet-manager
@@ -92,5 +92,5 @@ jobs:
       - name: Stop VM
         if: always() # Asegura que la VM se apague incluso si el despliegue falla
         run: |
-          az vm stop --resource-group ${{ env.AZURE_RG }} --name ${{ env.VM_NAME }} --no-wait
+          az vm stop --resource-group ${{ secrets.AZURE_RG }} --name ${{ env.VM_NAME }} --no-wait
         shell: bash
