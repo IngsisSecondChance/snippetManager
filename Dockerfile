@@ -4,7 +4,9 @@ WORKDIR /app
 COPY . .
 
 # Construimos el JAR
-RUN ./gradlew clean build -x test -x checkstyleMain -x checkstyleTest
+RUN --mount=type=secret,id=gpr_user,env=USERNAME \
+    --mount=type=secret,id=gpr_token,env=TOKEN \
+    ./gradlew clean build -x test -x checkstyleMain -x checkstyleTest
 
 FROM eclipse-temurin:21-jre
 

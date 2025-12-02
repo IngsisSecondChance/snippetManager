@@ -3,10 +3,10 @@ package ingsis.snippet.web;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ingsis.snippet.dto.GrantResponse;
 import ingsis.snippet.dto.PaginatedUsers;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.dto.ShareSnippetDTO;
+import ingsis.snippet.dto.SnippetPermissionGrantResponse;
 import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.services.RestTemplateService;
 import java.util.List;
@@ -85,7 +85,8 @@ public class PermissionsManagerHandler {
     }
   }
 
-  public Response<List<GrantResponse>> getSnippetRelationships(String token, String filterType) {
+  public Response<List<SnippetPermissionGrantResponse>> getSnippetRelationships(
+      String token, String filterType) {
     HttpHeaders header = new HttpHeaders();
     header.set("Authorization", token);
     HttpEntity<Void> requestPermissions = new HttpEntity<>(header);
@@ -97,7 +98,8 @@ public class PermissionsManagerHandler {
               requestPermissions,
               String.class,
               Map.of("filterType", filterType));
-      List<GrantResponse> snippetIds = objectMapper.readValue(response, new TypeReference<>() {});
+      List<SnippetPermissionGrantResponse> snippetIds =
+          objectMapper.readValue(response, new TypeReference<>() {});
       return Response.withData(snippetIds);
     } catch (HttpClientErrorException e) {
       return Response.withError(

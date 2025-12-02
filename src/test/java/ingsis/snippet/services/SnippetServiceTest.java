@@ -8,6 +8,8 @@ import ingsis.snippet.TestSecurityConfig;
 import ingsis.snippet.dto.*;
 import ingsis.snippet.entities.Snippet;
 import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
 import ingsis.snippet.repositories.SnippetRepository;
 import ingsis.snippet.web.BucketHandler;
 import ingsis.snippet.web.PermissionsManagerHandler;
@@ -43,6 +45,10 @@ public class SnippetServiceTest {
   @MockBean private PrintScriptServiceHandler printScriptServiceHandler;
 
   @MockBean private PermissionsManagerHandler permissionsManagerHandler;
+
+  @MockBean private LintProducer lintProducer;
+
+  @MockBean private StatusConsumer statusConsumer;
 
   @Autowired private SnippetRepository snippetRepository;
 
@@ -398,6 +404,30 @@ public class SnippetServiceTest {
   }
 
   @Test
+  void testGetFormattedFile() {
+    when(bucketHandler.get(anyString(), anyString()))
+        .thenReturn(Response.withData("formatted code"));
+
+    // Create and save a snippet
+    Snippet snippet = new Snippet();
+    snippet.setTitle("Hello World");
+    snippet.setDescription("Hello World in PrintScript");
+    snippet.setLanguage("printscript");
+    snippet.setExtension("ps");
+    snippet.setLintStatus(Snippet.Status.IN_PROGRESS);
+    snippet.setFormatStatus(Snippet.Status.COMPLIANT);
+    snippetRepository.save(snippet);
+
+    // Call the getFormattedFile method
+    Response<String> response = snippetService.getFormattedFile(snippet.getId(), mockToken);
+
+    // Verify the response
+    assertNotNull(response.getData());
+    assertEquals("formatted code", response.getData());
+    assertFalse(response.isError());
+  }
+
+  @Test
   void testGetAccessibleSnippets() {
     Snippet snippet1 = new Snippet();
     snippet1.setTitle("Title");
@@ -417,10 +447,10 @@ public class SnippetServiceTest {
     snippet2.setFormatStatus(Snippet.Status.IN_PROGRESS);
     snippetRepository.save(snippet2);
 
-    List<GrantResponse> relationships =
+    List<SnippetPermissionGrantResponse> relationships =
         List.of(
-            new GrantResponse(snippet1.getId(), "mockUsername"),
-            new GrantResponse(snippet2.getId(), "mockUsername"));
+            new SnippetPermissionGrantResponse(snippet1.getId(), "mockUsername"),
+            new SnippetPermissionGrantResponse(snippet2.getId(), "mockUsername"));
 
     when(permissionsManagerHandler.getSnippetRelationships(anyString(), anyString()))
         .thenReturn(Response.withData(relationships));
