@@ -8,6 +8,9 @@ import ingsis.snippet.dto.*;
 import ingsis.snippet.dto.User;
 import ingsis.snippet.entities.Snippet;
 import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.FormatProducer;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
 import ingsis.snippet.services.SnippetService;
 import ingsis.snippet.services.SnippetServiceTest;
 import java.util.List;
@@ -31,6 +34,13 @@ import org.springframework.web.multipart.MultipartFile;
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
 public class TestSnippetController {
+
+  @MockBean private LintProducer lintProducer;
+
+  @MockBean private FormatProducer formatProducer;
+
+  @MockBean private StatusConsumer statusConsumer;
+
   String token;
 
   @Autowired private SnippetController snippetController;

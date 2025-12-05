@@ -8,6 +8,8 @@ import ingsis.snippet.dto.Response;
 import ingsis.snippet.dto.TestDTO;
 import ingsis.snippet.entities.Snippet;
 import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
 import ingsis.snippet.repositories.SnippetRepository;
 import ingsis.snippet.repositories.TestRepository;
 import ingsis.snippet.web.BucketHandler;
@@ -44,6 +46,10 @@ public class TestServiceTest {
   @MockBean private PermissionsManagerHandler permissionsManagerHandler;
 
   @MockBean private PrintScriptServiceHandler printScriptServiceHandler;
+
+  @MockBean private LintProducer lintProducer;
+
+  @MockBean private StatusConsumer statusConsumer;
 
   @Autowired private TestService testService;
 

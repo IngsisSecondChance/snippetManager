@@ -97,7 +97,9 @@ public class TestService {
     log.info("getTestsForSnippet was called");
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     List<Test> tests = testRepository.findBySnippetId(snippetId);
 
@@ -201,7 +203,9 @@ public class TestService {
   public Response<Void> deleteTest(String testId, String token) {
     log.info("deleteTest was called");
     Optional<Test> test = testRepository.findById(testId);
-    if (test.isEmpty()) return Response.withError(new Error<>(404, "Test not found"));
+    if (test.isEmpty()) {
+      return Response.withError(new Error<>(404, "Test not found"));
+    }
 
     Snippet snippet = test.get().getSnippet();
     String snippetId = snippet.getId();

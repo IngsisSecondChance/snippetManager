@@ -6,6 +6,9 @@ import static org.mockito.Mockito.when;
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.dto.TestDTO;
 import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.FormatProducer;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
 import ingsis.snippet.services.SnippetServiceTest;
 import ingsis.snippet.services.TestService;
 import java.util.List;
@@ -24,7 +27,13 @@ import org.springframework.test.context.ActiveProfiles;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestControllerTest {
+public class TestTestController {
+
+  @MockBean private LintProducer lintProducer;
+
+  @MockBean private StatusConsumer statusConsumer;
+
+  @MockBean private FormatProducer formatProducer;
 
   @Autowired private TestController testController;
 

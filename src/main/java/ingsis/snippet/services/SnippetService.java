@@ -99,7 +99,9 @@ public class SnippetService {
     }
 
     Response<Void> response = bucketHandler.put("snippets/" + snippetId, code, token);
-    if (response.isError()) return Response.withError(response.getError());
+    if (response.isError()) {
+      return Response.withError(response.getError());
+    }
 
     generateEvents(token, snippetId, snippet, language);
 
@@ -312,17 +314,22 @@ public class SnippetService {
     log.info("downloadSnippet was called");
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
-    if (permissionsResponse.isError()) return Response.withError(permissionsResponse.getError());
+    if (permissionsResponse.isError()) {
+      return Response.withError(permissionsResponse.getError());
+    }
 
     Snippet snippet = snippetRepository.findById(snippetId).orElse(null);
     String extension;
-    if (snippet == null) return Response.withError(new Error<>(404, "Snippet not found"));
-    else {
+    if (snippet == null) {
+      return Response.withError(new Error<>(404, "Snippet not found"));
+    } else {
       extension = snippet.getExtension();
     }
 
     Response<String> response = bucketHandler.get("snippets/" + snippetId, token);
-    if (response.isError()) return Response.withError(response.getError());
+    if (response.isError()) {
+      return Response.withError(response.getError());
+    }
 
     Tuple tuple =
         new Tuple(response.getData(), snippet.getTitle().replace(" ", "_") + "." + extension);
@@ -333,7 +340,9 @@ public class SnippetService {
     log.info("getFormattedFile was called");
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
-    if (permissionsResponse.isError()) return permissionsResponse;
+    if (permissionsResponse.isError()) {
+      return permissionsResponse;
+    }
 
     Optional<Snippet> snippetOptional = snippetRepository.findById(snippetId);
     if (snippetOptional.isEmpty()) {
