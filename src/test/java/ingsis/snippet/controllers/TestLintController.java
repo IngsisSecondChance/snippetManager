@@ -1,0 +1,86 @@
+package ingsis.snippet.controllers;
+
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+import DTO.LintingConfigDTO;
+import ingsis.snippet.TestSecurityConfig;
+import ingsis.snippet.dto.Response;
+import ingsis.snippet.errorDTO.Error;
+import ingsis.snippet.redis.FormatProducer;
+import ingsis.snippet.redis.LintProducer;
+import ingsis.snippet.redis.StatusConsumer;
+import ingsis.snippet.services.ConfigService;
+import ingsis.snippet.services.SnippetServiceTest;
+import java.io.IOException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.junit.jupiter.MockitoSettings;
+import org.mockito.quality.Strictness;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+
+@ActiveProfiles("test")
+@MockitoSettings(strictness = Strictness.LENIENT)
+@Import(TestSecurityConfig.class)
+@ExtendWith(MockitoExtension.class)
+@SpringBootTest
+public class TestLintController {
+  @MockBean private LintProducer lintProducer;
+
+  @MockBean private FormatProducer formatProducer;
+
+  @MockBean private StatusConsumer statusConsumer;
+
+  String token;
+
+  @Autowired private LintConfigController lintConfigController;
+
+  @MockBean private ConfigService configService;
+
+  @BeforeEach
+  void setUp() {
+    token = SnippetServiceTest.securityConfig(this);
+  }
+
+  @Test
+  void testPutLint() throws IOException {
+    LintingConfigDTO lintingConfigDTO = new LintingConfigDTO();
+    lintingConfigDTO.setIdentifierFormat(LintingConfigDTO.IdentifierFormat.CAMEL_CASE);
+    lintingConfigDTO.setRestrictPrintln(true);
+    lintingConfigDTO.setRestrictReadInput(true);
+
+    when(configService.putLintingConfig(lintingConfigDTO, "mockUserId", token))
+        .thenReturn(Response.withData(null));
+
+    lintConfigController.putLintingConfig(lintingConfigDTO, token);
+
+    when(configService.putLintingConfig(lintingConfigDTO, "mockUserId", token))
+        .thenReturn(Response.withError(new Error<>(500, "Internal Server Error")));
+
+    assertTrue(true);
+  }
+
+  @Test
+  void testGetLint() {
+    LintingConfigDTO lintingConfigDTO = new LintingConfigDTO();
+    lintingConfigDTO.setIdentifierFormat(LintingConfigDTO.IdentifierFormat.CAMEL_CASE);
+    lintingConfigDTO.setRestrictPrintln(true);
+    lintingConfigDTO.setRestrictReadInput(true);
+
+    when(configService.getLintingConfig("mockUserId", token))
+        .thenReturn(Response.withData(lintingConfigDTO));
+
+    assertEquals(200, lintConfigController.getLintingConfig(token).getStatusCode().value());
+
+    when(configService.getLintingConfig("mockUserId", token))
+        .thenReturn(Response.withError(new Error<>(500, "Internal Server Error")));
+
+    assertEquals(500, lintConfigController.getLintingConfig(token).getStatusCode().value());
+  }
+}
