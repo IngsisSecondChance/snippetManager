@@ -21,6 +21,6 @@ COPY --from=builder /app/build/libs/*.jar app.jar
 # Copiar New Relic
 COPY newrelic newrelic
 
-EXPOSE 8080
+EXPOSE 8081
 
 ENTRYPOINT ["java", "-javaagent:/app/newrelic/newrelic.jar", "-jar", "/app/app.jar"]
