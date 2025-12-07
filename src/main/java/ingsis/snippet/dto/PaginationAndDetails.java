@@ -11,8 +11,8 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaginationAndDetails {
-  Integer page;
-  Integer page_size;
-  Integer count;
+  private Integer page;
+  private Integer page_size;
+  private Integer count;
   private List<SnippetCodeDetails> snippetCodeDetails;
 }
