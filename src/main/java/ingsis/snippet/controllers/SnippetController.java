@@ -151,19 +151,22 @@ public class SnippetController {
   }
 
   @GetMapping("/get/all")
-  public ResponseEntity<Object> getAccessibleSnippets(
+  public ResponseEntity<PaginationAndDetails> getAccessibleSnippets(
       @RequestHeader("Authorization") String token,
       @RequestParam(required = false) String relation,
       @RequestParam Integer page,
-      @RequestParam Integer page_size,
+      @RequestParam("page_size") Integer pageSize,
       @RequestParam String prefix) {
     Response<PaginationAndDetails> response =
-        snippetService.getAccessibleSnippets(token, relation, page, page_size, prefix);
+        snippetService.getAccessibleSnippets(token, relation, page, pageSize, prefix);
+
     if (response.isError()) {
-      return new ResponseEntity<>(
-          response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+      return new ResponseEntity<>(null, HttpStatusCode.valueOf(response.getError().code()));
     }
-    return new ResponseEntity<>(response.getData(), HttpStatus.OK);
+
+    PaginationAndDetails data = response.getData();
+    System.out.println(">> data en controller = " + data); // para ver que no sea null
+    return new ResponseEntity<>(data, HttpStatus.OK);
   }
 
   @GetMapping("/get/users")
