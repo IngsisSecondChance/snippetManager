@@ -17,7 +17,7 @@ spring:
           issuer-uri: ${AUTH0_ISSUER}
   data:
     redis:
-      host: redis
+      host: ${REDIS_HOST}
       port: 6379
 
 stream:
