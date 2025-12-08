@@ -101,8 +101,8 @@ public class OAuth2ResourceServerSecurityConfiguration {
     cfg.setAllowedOrigins(
         List.of(
             "http://localhost:5173",
-            "https://snippet-dev.westus2.cloudapp.azure.com",
-            "https://snippet-searcher.brazilsouth.cloudapp.azure.com"));
+            "https://snippets-dev.duckdns.org",
+            "https://snippets-prod.duckdns.org/"));
     cfg.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
     cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     cfg.setAllowCredentials(true);
