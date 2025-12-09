@@ -6,7 +6,6 @@ plugins {
     id("checkstyle")
     id("jacoco")
     kotlin("jvm") version "2.2.20"
-    id("co.uzzu.dotenv.gradle") version "4.0.0"
 }
 
 group = "ingsis"
