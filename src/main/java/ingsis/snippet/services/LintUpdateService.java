@@ -5,7 +5,7 @@ import ingsis.snippet.dto.Response;
 import ingsis.snippet.entities.Snippet;
 import ingsis.snippet.redis.ProducerInterface;
 import ingsis.snippet.repositories.SnippetRepository;
-import ingsis.snippet.web.PermissionsManagerHandler;
+import ingsis.snippet.web.handlers.PermissionsManagerHandler;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;

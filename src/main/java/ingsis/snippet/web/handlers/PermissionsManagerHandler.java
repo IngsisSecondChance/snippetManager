@@ -1,4 +1,6 @@
-package ingsis.snippet.web;
+package ingsis.snippet.web.handlers;
+
+import static ingsis.snippet.web.RequestExecutor.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -14,7 +16,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -75,7 +76,7 @@ public class PermissionsManagerHandler {
   public Response<String> shareSnippet(String token, ShareSnippetDTO shareSnippetDTO, String path) {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", token);
-    HttpEntity<Object> requestPermissions = new HttpEntity<>(shareSnippetDTO, headers);
+    HttpEntity<ShareSnippetDTO> requestPermissions = new HttpEntity<>(shareSnippetDTO, headers);
     try {
       postRequest(permissionsWebClient, path, requestPermissions, Void.class);
       return Response.withData(null);
@@ -127,7 +128,7 @@ public class PermissionsManagerHandler {
     } catch (HttpClientErrorException e) {
       return Response.withError(
           new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-    } catch (Exception e) {
+    } catch (JsonProcessingException e) {
       return Response.withError(new Error<>(400, "Error parsing response"));
     }
   }
@@ -164,28 +165,8 @@ public class PermissionsManagerHandler {
     } catch (HttpClientErrorException e) {
       return Response.withError(
           new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-    } catch (Exception e) {
+    } catch (JsonProcessingException e) {
       return Response.withError(new Error<>(400, "Failed to get snippets"));
     }
-  }
-
-  // Implementaciones locales para reemplazar las llamadas a RequestExecutor
-  private <T> T postRequest(
-      RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType) {
-    return client.exchange(path, HttpMethod.POST, request, responseType).getBody();
-  }
-
-  private <T> T getRequest(
-      RestTemplate client,
-      String path,
-      HttpEntity<?> request,
-      Class<T> responseType,
-      Map<String, String> params) {
-    return client.exchange(path, HttpMethod.GET, request, responseType, params).getBody();
-  }
-
-  private <T> T deleteRequest(
-      RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType) {
-    return client.exchange(path, HttpMethod.DELETE, request, responseType).getBody();
   }
 }

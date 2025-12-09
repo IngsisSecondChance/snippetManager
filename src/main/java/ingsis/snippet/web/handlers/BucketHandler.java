@@ -1,12 +1,12 @@
-package ingsis.snippet.web;
+package ingsis.snippet.web.handlers;
+
+import static ingsis.snippet.web.RequestExecutor.putRequest;
 
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.services.RestTemplateService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -24,12 +24,10 @@ public class BucketHandler {
     headers.set("Authorization", token);
     HttpEntity<String> request = new HttpEntity<>(text, headers);
     try {
-      // Use exchange to include headers (body is the request entity)
-      ResponseEntity<Void> resp =
-          bucketWebClient.exchange("/v1/asset/" + path, HttpMethod.PUT, request, Void.class);
+      putRequest(bucketWebClient, "/v1/asset/" + path, request);
       return Response.withData(null);
     } catch (HttpClientErrorException e) {
-      return Response.withError(new Error<>(e.getStatusCode().value(), "Internal Server Error"));
+      return Response.withError(new Error<>(500, "Internal Server Error"));
     }
   }
 
