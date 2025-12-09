@@ -102,7 +102,7 @@ public class OAuth2ResourceServerSecurityConfiguration {
         List.of(
             "http://localhost:5173",
             "https://snippets-dev.duckdns.org",
-            "https://snippets-prod.duckdns.org/"));
+            "https://snippets-prod.duckdns.org"));
     cfg.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
     cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
     cfg.setAllowCredentials(true);
