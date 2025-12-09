@@ -12,7 +12,7 @@ import ingsis.snippet.entities.LintConfig;
 import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.repositories.FormatConfigRepository;
 import ingsis.snippet.repositories.LintingConfigRepository;
-import ingsis.snippet.web.BucketHandler;
+import ingsis.snippet.web.handlers.BucketHandler;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;

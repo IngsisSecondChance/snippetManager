@@ -1,4 +1,4 @@
-package ingsis.snippet.web;
+package ingsis.snippet.web.handlers;
 
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.errorDTO.Error;
@@ -10,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import static ingsis.snippet.web.RequestExecutor.putRequest;
 
 @Component
 public class BucketHandler {
@@ -24,12 +26,10 @@ public class BucketHandler {
     headers.set("Authorization", token);
     HttpEntity<String> request = new HttpEntity<>(text, headers);
     try {
-      // Use exchange to include headers (body is the request entity)
-      ResponseEntity<Void> resp =
-          bucketWebClient.exchange("/v1/asset/" + path, HttpMethod.PUT, request, Void.class);
+      putRequest(bucketWebClient, "/v1/asset/" + path, request);
       return Response.withData(null);
     } catch (HttpClientErrorException e) {
-      return Response.withError(new Error<>(e.getStatusCode().value(), "Internal Server Error"));
+      return Response.withError(new Error<>(500, "Internal Server Error"));
     }
   }
 
@@ -38,8 +38,7 @@ public class BucketHandler {
     headers.set("Authorization", token);
     HttpEntity<Void> request = new HttpEntity<>(headers);
     try {
-      return Response.withData(
-          bucketWebClient.getForObject("/v1/asset/" + path, String.class, request));
+      return Response.withData(bucketWebClient.getForObject("/v1/asset/" + path, String.class, request));
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode().value() == 404) {
         return Response.withError(new Error<>(404, "Not Found"));

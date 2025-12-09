@@ -1,4 +1,4 @@
-package ingsis.snippet.web;
+package ingsis.snippet.web.handlers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -19,6 +19,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import static ingsis.snippet.web.RequestExecutor.*;
+
 @Component
 public class PermissionsManagerHandler {
 
@@ -26,8 +28,7 @@ public class PermissionsManagerHandler {
   private final ObjectMapper objectMapper;
 
   @Autowired
-  public PermissionsManagerHandler(
-      RestTemplateService permissionsRestTemplate, ObjectMapper objectMapper) {
+  public PermissionsManagerHandler(RestTemplateService permissionsRestTemplate, ObjectMapper objectMapper) {
     this.permissionsWebClient = permissionsRestTemplate.getRestTemplate();
     this.objectMapper = objectMapper;
   }
@@ -40,8 +41,7 @@ public class PermissionsManagerHandler {
       postRequest(permissionsWebClient, path, requestPermissions, Void.class);
       return Response.withData(null);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
     }
   }
 
@@ -54,8 +54,7 @@ public class PermissionsManagerHandler {
       getRequest(permissionsWebClient, path, requestPermissions, Void.class, params);
       return Response.withData(null);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
     }
   }
 
@@ -67,67 +66,51 @@ public class PermissionsManagerHandler {
       deleteRequest(permissionsWebClient, path, requestPermissions, Void.class);
       return Response.withData(null);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
     }
   }
 
   public Response<String> shareSnippet(String token, ShareSnippetDTO shareSnippetDTO, String path) {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", token);
-    HttpEntity<Object> requestPermissions = new HttpEntity<>(shareSnippetDTO, headers);
+    HttpEntity<ShareSnippetDTO> requestPermissions = new HttpEntity<>(shareSnippetDTO, headers);
     try {
       postRequest(permissionsWebClient, path, requestPermissions, Void.class);
       return Response.withData(null);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
     }
   }
 
-  public Response<List<SnippetPermissionGrantResponse>> getSnippetRelationships(
-      String token, String filterType) {
+  public Response<List<SnippetPermissionGrantResponse>> getSnippetRelationships(String token, String filterType) {
     HttpHeaders header = new HttpHeaders();
     header.set("Authorization", token);
     HttpEntity<Void> requestPermissions = new HttpEntity<>(header);
     try {
-      String response =
-          getRequest(
-              permissionsWebClient,
-              "snippets/get/relationships",
-              requestPermissions,
-              String.class,
-              Map.of("filterType", filterType));
-      List<SnippetPermissionGrantResponse> snippetIds =
-          objectMapper.readValue(response, new TypeReference<>() {});
+      String response = getRequest(permissionsWebClient, "snippets/get/relationships", requestPermissions,
+              String.class, Map.of("filterType", filterType));
+      List<SnippetPermissionGrantResponse> snippetIds = objectMapper.readValue(response, new TypeReference<>() {
+      });
       return Response.withData(snippetIds);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
     } catch (JsonProcessingException e) {
       return Response.withError(new Error<>(400, "Error parsing response"));
     }
   }
 
-  public Response<PaginatedUsers> getSnippetUsers(
-      String token, String prefix, Integer page, Integer pageSize) {
+  public Response<PaginatedUsers> getSnippetUsers(String token, String prefix, Integer page, Integer pageSize) {
     HttpHeaders header = new HttpHeaders();
     header.set("Authorization", token);
     HttpEntity<Void> requestPermissions = new HttpEntity<>(header);
     try {
-      String response =
-          getRequest(
-              permissionsWebClient,
-              "snippets/paginated",
-              requestPermissions,
-              String.class,
+      String response = getRequest(permissionsWebClient, "snippets/paginated", requestPermissions, String.class,
               Map.of("page", page.toString(), "pageSize", pageSize.toString(), "prefix", prefix));
       PaginatedUsers paginatedUsers = objectMapper.readValue(response, PaginatedUsers.class);
       return Response.withData(paginatedUsers);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-    } catch (Exception e) {
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+    } catch (JsonProcessingException e) {
       return Response.withError(new Error<>(400, "Error parsing response"));
     }
   }
@@ -137,17 +120,11 @@ public class PermissionsManagerHandler {
     header.set("Authorization", token);
     HttpEntity<Void> requestPermissions = new HttpEntity<>(header);
     try {
-      String response =
-          getRequest(
-              permissionsWebClient,
-              "snippets/get/author",
-              requestPermissions,
-              String.class,
+      String response = getRequest(permissionsWebClient, "snippets/get/author", requestPermissions, String.class,
               Map.of("snippetId", snippetId));
       return Response.withData(response);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
     }
   }
 
@@ -156,36 +133,15 @@ public class PermissionsManagerHandler {
     headers.set("Authorization", token);
     HttpEntity<Void> request = new HttpEntity<>(headers);
     try {
-      String response =
-          getRequest(
-              permissionsWebClient, "/snippets/get/all/edit", request, String.class, Map.of());
-      List<String> snippetIds = objectMapper.readValue(response, new TypeReference<>() {});
+      String response = getRequest(permissionsWebClient, "/snippets/get/all/edit", request, String.class,
+              Map.of());
+      List<String> snippetIds = objectMapper.readValue(response, new TypeReference<>() {
+      });
       return Response.withData(snippetIds);
     } catch (HttpClientErrorException e) {
-      return Response.withError(
-          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
-    } catch (Exception e) {
+      return Response.withError(new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+    } catch (JsonProcessingException e) {
       return Response.withError(new Error<>(400, "Failed to get snippets"));
     }
-  }
-
-  // Implementaciones locales para reemplazar las llamadas a RequestExecutor
-  private <T> T postRequest(
-      RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType) {
-    return client.exchange(path, HttpMethod.POST, request, responseType).getBody();
-  }
-
-  private <T> T getRequest(
-      RestTemplate client,
-      String path,
-      HttpEntity<?> request,
-      Class<T> responseType,
-      Map<String, String> params) {
-    return client.exchange(path, HttpMethod.GET, request, responseType, params).getBody();
-  }
-
-  private <T> T deleteRequest(
-      RestTemplate client, String path, HttpEntity<?> request, Class<T> responseType) {
-    return client.exchange(path, HttpMethod.DELETE, request, responseType).getBody();
   }
 }
