@@ -3,11 +3,11 @@ package ingsis.snippet.controllers;
 import static ingsis.snippet.utils.Utils.checkMediaType;
 
 import ingsis.snippet.dto.*;
-import ingsis.snippet.dto.SnippetCodeDetails;
 import ingsis.snippet.redis.ProducerInterface;
 import ingsis.snippet.services.SnippetService;
 import ingsis.snippet.utils.TokenUtils;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/snippets")
+@Slf4j
 public class SnippetController {
 
   private final SnippetService snippetService;
@@ -27,6 +28,7 @@ public class SnippetController {
   @PostMapping("/save")
   public ResponseEntity<Object> saveSnippet(
       @RequestBody SnippetDTO snippetDTO, @RequestHeader("Authorization") String token) {
+    log.info("saveSnippet was called");
     Response<SnippetCodeDetails> response = snippetService.saveSnippet(snippetDTO, token);
     if (response.isError()) {
       return new ResponseEntity<>(

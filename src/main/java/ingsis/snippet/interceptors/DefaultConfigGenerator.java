@@ -29,16 +29,38 @@ public class DefaultConfigGenerator implements HandlerInterceptor {
     }
 
     try {
-      String token = request.getHeader("authorization").substring(7);
+      // Verificar si existe el header de autorización
+      String authHeader = request.getHeader("authorization");
+      if (authHeader == null || authHeader.length() <= 7) {
+        // Si no hay token, permitir que la request continúe
+        // El sistema de seguridad de Spring manejará la autenticación
+        return true;
+      }
+
+      String token = authHeader.substring(7);
       String userId = TokenUtils.decodeToken(token).get("userId");
+
+      // Verificar si el userId es válido
+      if (userId == null || userId.isEmpty()) {
+        return true;
+      }
+
+      // Si ya existen ambas configuraciones, continuar
       if (formatConfigRepository.existsById(userId) && lintingConfigRepository.existsById(userId)) {
         return true;
       }
+
+      // Generar configuraciones por defecto si no existen
       configService.generateDefaultLintingConfig(userId, token);
       configService.generateDefaultFormatConfig(userId, token);
       return true;
     } catch (Exception e) {
-      return false;
+      // Log del error para debugging
+      System.err.println("Error en DefaultConfigGenerator: " + e.getMessage());
+      e.printStackTrace();
+      // Permitir que la request continúe en caso de error
+      // así el controller puede manejar la lógica de negocio normalmente
+      return true;
     }
   }
 }

@@ -27,60 +27,44 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Profile("!test")
 public class OAuth2ResourceServerSecurityConfiguration {
 
-  @Value("${auth0.audience}")
-  private String audience;
+  private final String audience;
+  private final String issuer;
 
-  @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}")
-  private String issuer;
+  public OAuth2ResourceServerSecurityConfiguration(
+      @Value("${auth0.audience}") String audience,
+      @Value("${spring.security.oauth2.resourceserver.jwt.issuer-uri}") String issuer) {
+    this.audience = audience;
+    this.issuer = issuer;
+  }
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests(
-            authorizeRequests ->
-                authorizeRequests
-                    .requestMatchers("/")
+    http.csrf(AbstractHttpConfigurer::disable)
+        .cors(withDefaults())
+        .authorizeHttpRequests(
+            auth ->
+                auth.requestMatchers(
+                        "/",
+                        "/ping",
+                        "/actuator/**",
+                        "/swagger-ui",
+                        "/swagger-ui/*",
+                        "/v3/api-docs",
+                        "/v3/api-docs/*")
                     .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/snippets")
+                    .requestMatchers(HttpMethod.GET, "/snippets/**")
                     .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.GET, "/snippets/*")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.POST, "/snippets")
+                    .requestMatchers(HttpMethod.POST, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.DELETE, "/snippets/*")
+                    .requestMatchers(HttpMethod.DELETE, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.PUT, "/format")
+                    .requestMatchers(HttpMethod.PUT, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.GET, "/format")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.PUT, "/lint")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.GET, "/lint")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.GET, "/test/*")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.GET, "/test")
-                    .hasAuthority("SCOPE_read:snippets")
-                    .requestMatchers(HttpMethod.POST, "/test/*")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.POST, "/test")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.DELETE, "/test/*")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.DELETE, "/test")
-                    .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.GET, "/swagger-ui")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/swagger-ui/*")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v3/api-docs")
-                    .permitAll()
-                    .requestMatchers(HttpMethod.GET, "/v3/api-docs/*")
-                    .permitAll()
                     .anyRequest()
                     .authenticated())
-        .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
-        .cors(withDefaults())
-        .csrf(AbstractHttpConfigurer::disable);
+        .oauth2ResourceServer(
+            oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(new JwtAuthConverter())));
+
     return http.build();
   }
 
