@@ -23,6 +23,4 @@ COPY newrelic newrelic
 
 EXPOSE 8081
 
-ENTRYPOINT ["java", \
-  "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=0.0.0.0:5005", \
-  "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-javaagent:/app/newrelic/newrelic.jar", "-jar", "/app/app.jar"]
