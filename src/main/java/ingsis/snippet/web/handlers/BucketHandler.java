@@ -1,17 +1,15 @@
 package ingsis.snippet.web.handlers;
 
+import static ingsis.snippet.web.RequestExecutor.putRequest;
+
 import ingsis.snippet.dto.Response;
 import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.services.RestTemplateService;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import static ingsis.snippet.web.RequestExecutor.putRequest;
 
 @Component
 public class BucketHandler {
@@ -38,7 +36,8 @@ public class BucketHandler {
     headers.set("Authorization", token);
     HttpEntity<Void> request = new HttpEntity<>(headers);
     try {
-      return Response.withData(bucketWebClient.getForObject("/v1/asset/" + path, String.class, request));
+      return Response.withData(
+          bucketWebClient.getForObject("/v1/asset/" + path, String.class, request));
     } catch (HttpClientErrorException e) {
       if (e.getStatusCode().value() == 404) {
         return Response.withError(new Error<>(404, "Not Found"));
