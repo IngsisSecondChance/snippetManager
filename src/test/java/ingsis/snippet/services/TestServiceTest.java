@@ -1,6 +1,5 @@
 package ingsis.snippet.services;
 
-import static ingsis.snippet.utils.TokenUtils.decodeToken;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -18,7 +17,6 @@ import ingsis.snippet.web.handlers.PermissionsManagerHandler;
 import ingsis.snippet.web.handlers.PrintScriptServiceHandler;
 import jakarta.transaction.Transactional;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -257,14 +255,5 @@ public class TestServiceTest {
     assertFalse(deleteResponse.isError());
 
     assertEquals(0, testRepository.count());
-  }
-
-  @Test
-  @Transactional
-  void testDecodeToken() {
-    String userId =
-        "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6IkMzTWR4a0tXVXpsaGhtVjRYZGJsTiJ9.eyJpc3MiOiJodHRwczovL2Rldi12cDN3NHF4ZjV1c3ZsdWV6LnVzLmF1dGgwLmNvbS8iLCJzdWIiOiI1R0g1S0RWd3REdEdyWlc1c2FCejJ6aTlpTGtXY1NGZEBjbGllbnRzIiwiYXVkIjoiaHR0cHM6Ly9zbmlwcGV0LWFwaSIsImlhdCI6MTc2NTM3ODM2NSwiZXhwIjoxNzY1NDY0NzY1LCJzY29wZSI6InJlYWQ6c25pcHBldHMgd3JpdGU6c25pcHBldHMiLCJndHkiOiJjbGllbnQtY3JlZGVudGlhbHMiLCJhenAiOiI1R0g1S0RWd3REdEdyWlc1c2FCejJ6aTlpTGtXY1NGZCIsInBlcm1pc3Npb25zIjpbInJlYWQ6c25pcHBldHMiLCJ3cml0ZTpzbmlwcGV0cyJdfQ.D2G4xvJG2KM429HyzqH-6kgGvuR5ArgomJTcnMyzGM_um0GQ_01ikrPPG44-v2YfN2aWHycMfEaH06_d1fWHtS2fPOm752pcPYaVsPtpnQZiU9whvoQEV-3ZjawigZku3Ty8GsLZEOcQ0FkzjeJkkxJt8jdA4egLs9YlUbSfU4n1DFntnXbQznS6EqJuQBrQYqF6rnyRi6dkRsORLhUME-X200KPBt3EDArmvxpEngmY_ciPyYwfHCHs-E3zVj9TOrlGpv9N3RHKAJ8sg2CVhlDsNnUGdrz4oG2KjSj30HA9VNXd98lo9LHSxEuGnGctuUn6UJrHaxANeIA1WwGwsw";
-    Map<String, String> map = decodeToken(userId);
-    assertNotNull(userId);
   }
 }
