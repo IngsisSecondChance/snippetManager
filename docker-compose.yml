@@ -21,6 +21,7 @@ services:
       - "6379:6379"
 
   snippet-manager:
+    container_name: snippet-manager
     build: .
     depends_on:
       - postgres
@@ -28,6 +29,13 @@ services:
       - .env
     ports:
       - "8081:8081"
+    networks:
+      - default
+      - microservices-network
+
+networks:
+  microservices-network:
+    external: true
 
 volumes:
   postgres-data:

@@ -62,37 +62,32 @@ public class OAuth2ResourceServerSecurityConfiguration {
                     .hasAuthority("SCOPE_write:snippets")
                     .anyRequest()
                     .authenticated())
-        .oauth2ResourceServer(
-            oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(new JwtAuthConverter())));
+        .oauth2ResourceServer(oauth2 -> oauth2.jwt(withDefaults()))
+        .cors(withDefaults())
+        .csrf(AbstractHttpConfigurer::disable);
 
     return http.build();
   }
 
   @Bean
   public JwtDecoder jwtDecoder() {
-    NimbusJwtDecoder jwtDecoder = NimbusJwtDecoder.withIssuerLocation(issuer).build();
-    OAuth2TokenValidator<Jwt> audienceValidator = new AudienceValidator(audience);
-    OAuth2TokenValidator<Jwt> withIssuer = JwtValidators.createDefaultWithIssuer(issuer);
-    OAuth2TokenValidator<Jwt> withAudience =
-        new DelegatingOAuth2TokenValidator<>(withIssuer, audienceValidator);
-    jwtDecoder.setJwtValidator(withAudience);
-    return jwtDecoder;
+    NimbusJwtDecoder dec = NimbusJwtDecoder.withIssuerLocation(issuer).build();
+    OAuth2TokenValidator<Jwt> aud = new AudienceValidator(audience);
+    OAuth2TokenValidator<Jwt> iss = JwtValidators.createDefaultWithIssuer(issuer);
+    dec.setJwtValidator(new DelegatingOAuth2TokenValidator<>(iss, aud));
+    return dec;
   }
 
+  // CorsConfig
   @Bean
   public CorsConfigurationSource corsConfigurationSource() {
     CorsConfiguration cfg = new CorsConfiguration();
-    cfg.setAllowedOrigins(
-        List.of(
-            "http://localhost:5173",
-            "https://snippets-dev.duckdns.org",
-            "https://snippets-prod.duckdns.org"));
-    cfg.setAllowedMethods(List.of("GET", "PUT", "POST", "DELETE", "OPTIONS"));
-    cfg.setAllowedHeaders(List.of("Authorization", "Content-Type"));
-    cfg.setAllowCredentials(true);
-
+    cfg.setAllowedOrigins(List.of("*"));
+    cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    cfg.setAllowedHeaders(List.of("*"));
     UrlBasedCorsConfigurationSource src = new UrlBasedCorsConfigurationSource();
     src.registerCorsConfiguration("/**", cfg);
+
     return src;
   }
 }
