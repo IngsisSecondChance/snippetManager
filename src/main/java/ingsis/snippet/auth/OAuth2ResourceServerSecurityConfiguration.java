@@ -39,13 +39,10 @@ public class OAuth2ResourceServerSecurityConfiguration {
 
   @Bean
   public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(AbstractHttpConfigurer::disable)
-        .cors(withDefaults())
-        .authorizeHttpRequests(
+    http.authorizeHttpRequests(
             auth ->
                 auth.requestMatchers(
                         "/",
-                        "/ping",
                         "/actuator/**",
                         "/swagger-ui",
                         "/swagger-ui/*",
@@ -58,7 +55,25 @@ public class OAuth2ResourceServerSecurityConfiguration {
                     .hasAuthority("SCOPE_write:snippets")
                     .requestMatchers(HttpMethod.DELETE, "/snippets/**")
                     .hasAuthority("SCOPE_write:snippets")
-                    .requestMatchers(HttpMethod.PUT, "/snippets/**")
+                    .requestMatchers(HttpMethod.PUT, "/format/**")
+                    .hasAuthority("SCOPE_write:snippets")
+                    .requestMatchers(HttpMethod.GET, "/format/**")
+                    .hasAuthority("SCOPE_read:snippets")
+                    .requestMatchers(HttpMethod.PUT, "/lint/**")
+                    .hasAuthority("SCOPE_write:snippets")
+                    .requestMatchers(HttpMethod.GET, "/lint/**")
+                    .hasAuthority("SCOPE_read:snippets")
+                    .requestMatchers(HttpMethod.GET, "/test/**")
+                    .hasAuthority("SCOPE_read:snippets")
+                    .requestMatchers(HttpMethod.GET, "/test/**")
+                    .hasAuthority("SCOPE_read:snippets")
+                    .requestMatchers(HttpMethod.POST, "/test/**")
+                    .hasAuthority("SCOPE_write:snippets")
+                    .requestMatchers(HttpMethod.POST, "/test/**")
+                    .hasAuthority("SCOPE_write:snippets")
+                    .requestMatchers(HttpMethod.DELETE, "/test/**")
+                    .hasAuthority("SCOPE_write:snippets")
+                    .requestMatchers(HttpMethod.DELETE, "/test/**")
                     .hasAuthority("SCOPE_write:snippets")
                     .anyRequest()
                     .authenticated())
