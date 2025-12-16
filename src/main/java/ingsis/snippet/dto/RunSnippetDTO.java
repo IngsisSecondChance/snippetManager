@@ -12,9 +12,9 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RunSnippetDTO {
 
-    @NotBlank(message = "snippetId is required")
-    private String snippetId;
+  @NotBlank(message = "snippetId is required")
+  private String snippetId;
 
-    @NotNull(message = "Inputs are required")
-    private List<String> inputs;
+  @NotNull(message = "Inputs are required")
+  private List<String> inputs;
 }
