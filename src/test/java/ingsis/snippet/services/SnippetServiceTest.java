@@ -502,4 +502,43 @@ public class SnippetServiceTest {
     assertNotNull(response.getData());
     assertEquals(paginatedUsers, response.getData());
   }
+
+  @Test
+  void testRun() {
+    SnippetDTO snippetDTO = new SnippetDTO();
+    snippetDTO.setCode("print('Hello World!')");
+    snippetDTO.setLanguage("printscript");
+    snippetDTO.setExtension("ps");
+    snippetDTO.setDescription("Hello World in PrintScript");
+    snippetDTO.setTitle("Hello World");
+
+    Response<SnippetCodeDetails> response = snippetService.saveSnippet(snippetDTO, mockToken);
+
+    assertNotNull(response.getData());
+    assertEquals("mockUsername", response.getData().getAuthor());
+    assertTrue(uuid.matcher(response.getData().getId()).matches());
+    assertEquals("print('Hello World!')", response.getData().getCode());
+    assertEquals("printscript", response.getData().getLanguage());
+    assertEquals("ps", response.getData().getExtension());
+
+    // test db
+    Snippet snippet = snippetRepository.findById(response.getData().getId()).get();
+    assertEquals(snippet.getTitle(), "Hello World");
+    assertEquals(snippet.getDescription(), "Hello World in PrintScript");
+    assertEquals(snippet.getLanguage(), "printscript");
+    assertEquals(snippet.getExtension(), "ps");
+    assertEquals(snippet.getLintStatus(), Snippet.Status.IN_PROGRESS);
+    assertEquals(snippet.getFormatStatus(), Snippet.Status.IN_PROGRESS);
+
+    when(printScriptServiceHandler.executeSnippet(anyString(), anyString(), anyList(), anyString()))
+        .thenReturn(Response.withData(List.of("Hello, World!")));
+
+    RunSnippetDTO runSnippetDTO = new RunSnippetDTO();
+    runSnippetDTO.setSnippetId(response.getData().getId());
+    runSnippetDTO.setInputs(List.of());
+
+    Response<List<String>> runResponse = snippetService.runSnippet(runSnippetDTO, mockToken);
+    assertNotNull(runResponse.getData());
+    assertEquals(List.of("Hello, World!"), runResponse.getData());
+  }
 }
