@@ -27,7 +27,7 @@ import org.springframework.test.context.ActiveProfiles;
 @MockitoSettings(strictness = Strictness.LENIENT)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestTestController {
+public class TestControllerTest {
 
   @MockBean private LintProducer lintProducer;
 

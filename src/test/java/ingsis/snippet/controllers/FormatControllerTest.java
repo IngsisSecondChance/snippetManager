@@ -30,7 +30,7 @@ import org.springframework.test.context.ActiveProfiles;
 @Import(TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestFormatController {
+public class FormatControllerTest {
   @MockBean private LintProducer lintProducer;
 
   @MockBean private StatusConsumer statusConsumer;
