@@ -33,7 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Import(TestSecurityConfig.class)
 @ExtendWith(MockitoExtension.class)
 @SpringBootTest
-public class TestSnippetController {
+public class SnippetControllerTest {
 
   @MockBean private LintProducer lintProducer;
 
@@ -288,17 +288,6 @@ public class TestSnippetController {
 
   @Test
   void testDownloadSnippet() {
-    SnippetCodeDetails snippetCodeDetails =
-        new SnippetCodeDetails(
-            "mockUsername",
-            "mockId",
-            "title",
-            "description",
-            "language",
-            "version",
-            "code",
-            Snippet.Status.IN_PROGRESS);
-
     when(snippetService.downloadSnippet("id1", token))
         .thenReturn(Response.withData(new SnippetService.Tuple("println(1)", "filename.txt")));
 
@@ -319,5 +308,22 @@ public class TestSnippetController {
         .thenReturn(Response.withError(new Error<>(400, "error")));
 
     assertEquals(400, snippetController.getFormattedSnippet("id1", token).getStatusCode().value());
+  }
+
+  @Test
+  void testRunSnippet() {
+    RunSnippetDTO runSnippetDTO = new RunSnippetDTO("id1", List.of("input1", "input2"));
+
+    when(snippetService.runSnippet(runSnippetDTO, token))
+        .thenReturn(Response.withData(List.of("output1", "output2")));
+
+    assertEquals(
+        List.of("output1", "output2"),
+        snippetController.runSnippet(runSnippetDTO, token).getBody());
+
+    when(snippetService.runSnippet(runSnippetDTO, token))
+        .thenReturn(Response.withError(new Error<>(400, "error")));
+
+    assertEquals(400, snippetController.runSnippet(runSnippetDTO, token).getStatusCode().value());
   }
 }

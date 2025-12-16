@@ -17,4 +17,9 @@ public class RunSnippetDTO {
 
   @NotNull(message = "Inputs are required")
   private List<String> inputs;
+
+  public RunSnippetDTO(String snippetId, List<String> inputs) {
+    this.snippetId = snippetId;
+    this.inputs = inputs;
+  }
 }

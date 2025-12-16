@@ -169,9 +169,6 @@ public class TestServiceTest {
     updatedTestDTO.setInputQueue(List.of());
     updatedTestDTO.setOutputQueue(List.of("Hello, World!"));
 
-    when(permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/can-edit"))
-        .thenReturn(Response.withData(null));
-
     Response<Void> updatedResponse = testService.updateTest(updatedTestDTO, token);
 
     assertFalse(updatedResponse.isError());
