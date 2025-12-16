@@ -1,6 +1,5 @@
 package ingsis.snippet.web.handlers;
 
-import static ingsis.snippet.web.RequestExecutor.getRequest;
 import static ingsis.snippet.web.RequestExecutor.postRequest;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -11,7 +10,6 @@ import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.errorDTO.ErrorMessage;
 import ingsis.snippet.services.RestTemplateService;
 import java.util.List;
-import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -98,8 +96,7 @@ public class PrintScriptServiceHandler {
         new HttpEntity<>(new RunSnippetData(snippetId, version, inputs), headers);
     try {
       List<String> output =
-          getRequest(
-              printScriptWebClient, "/runner/execute", requestPrintScript, List.class, Map.of());
+          postRequest(printScriptWebClient, "/runner/execute", requestPrintScript, List.class);
       return Response.withData(output);
     } catch (HttpClientErrorException e) {
       return Response.withError(
