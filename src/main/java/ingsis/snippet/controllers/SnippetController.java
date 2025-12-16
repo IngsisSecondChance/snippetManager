@@ -205,7 +205,7 @@ public class SnippetController {
         .body(response.getData().code());
   }
 
-  @GetMapping("/run")
+  @PostMapping("/run")
   public ResponseEntity<Object> runSnippet(
       @RequestBody RunSnippetDTO runSnippetDTO, @RequestHeader("Authorization") String token) {
     Response<List<String>> response = snippetService.runSnippet(runSnippetDTO, token);
