@@ -90,7 +90,8 @@ public class PrintScriptServiceHandler {
     }
   }
 
-  public Response<List<String>> executeSnippet(String snippetId, String version, List<String> inputs, String token) {
+  public Response<List<String>> executeSnippet(
+      String snippetId, String version, List<String> inputs, String token) {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", token);
     HttpEntity<RunSnippetData> requestPrintScript =

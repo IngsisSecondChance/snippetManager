@@ -468,7 +468,8 @@ public class SnippetService {
     }
 
     Response<List<String>> printScriptResponse =
-        printScriptServiceHandler.executeSnippet(snippetId, "1.1", runSnippetDTO.getInputs(), token);
+        printScriptServiceHandler.executeSnippet(
+            snippetId, "1.1", runSnippetDTO.getInputs(), token);
     if (printScriptResponse.isError()) {
       return Response.withError(printScriptResponse.getError());
     }
