@@ -90,15 +90,15 @@ public class PrintScriptServiceHandler {
     }
   }
 
-  public Response<String> executeSnippet(String snippetId, String version, String token) {
+  public Response<List<String>> executeSnippet(String snippetId, String version, List<String> inputs, String token) {
     HttpHeaders headers = new HttpHeaders();
     headers.set("Authorization", token);
-    HttpEntity<SnippetData> requestPrintScript =
-        new HttpEntity<>(new SnippetData(snippetId, version), headers);
+    HttpEntity<RunSnippetData> requestPrintScript =
+        new HttpEntity<>(new RunSnippetData(snippetId, version, inputs), headers);
     try {
-      String output =
+      List<String> output =
           getRequest(
-              printScriptWebClient, "/runner/execute", requestPrintScript, String.class, Map.of());
+              printScriptWebClient, "/runner/execute", requestPrintScript, List.class, Map.of());
       return Response.withData(output);
     } catch (HttpClientErrorException e) {
       return Response.withError(

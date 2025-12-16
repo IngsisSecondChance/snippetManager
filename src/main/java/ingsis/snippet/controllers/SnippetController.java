@@ -207,8 +207,8 @@ public class SnippetController {
 
   @GetMapping("/run")
   public ResponseEntity<Object> runSnippet(
-      @RequestParam String snippetId, @RequestHeader("Authorization") String token) {
-    Response<String> response = snippetService.runSnippet(snippetId, token);
+      @RequestBody RunSnippetDTO runSnippetDTO, @RequestHeader("Authorization") String token) {
+    Response<List<String>> response = snippetService.runSnippet(runSnippetDTO, token);
     if (response.isError()) {
       return new ResponseEntity<>(
           response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));

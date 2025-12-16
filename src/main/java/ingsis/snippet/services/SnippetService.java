@@ -453,12 +453,13 @@ public class SnippetService {
     return response;
   }
 
-  public Response<String> runSnippet(String snippetId, String token) {
+  public Response<List<String>> runSnippet(RunSnippetDTO runSnippetDTO, String token) {
     log.info("runSnippet was called");
-    Optional<Snippet> snippet = snippetRepository.findById(snippetId);
+    Optional<Snippet> snippet = snippetRepository.findById(runSnippetDTO.getSnippetId());
     if (snippet.isEmpty()) {
       return Response.withError(new Error<>(404, "Snippet not found"));
     }
+    String snippetId = snippet.get().getId();
 
     Response<String> permissionsResponse =
         permissionsManagerHandler.checkPermissions(snippetId, token, "/snippets/has-access");
@@ -466,8 +467,8 @@ public class SnippetService {
       return Response.withError(permissionsResponse.getError());
     }
 
-    Response<String> printScriptResponse =
-        printScriptServiceHandler.executeSnippet(snippetId, "1.1", token);
+    Response<List<String>> printScriptResponse =
+        printScriptServiceHandler.executeSnippet(snippetId, "1.1", runSnippetDTO.getInputs(), token);
     if (printScriptResponse.isError()) {
       return Response.withError(printScriptResponse.getError());
     }
