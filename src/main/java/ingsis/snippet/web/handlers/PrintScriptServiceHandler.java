@@ -5,10 +5,7 @@ import static ingsis.snippet.web.RequestExecutor.postRequest;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import ingsis.snippet.dto.Lint;
-import ingsis.snippet.dto.Response;
-import ingsis.snippet.dto.TestData;
-import ingsis.snippet.dto.Validation;
+import ingsis.snippet.dto.*;
 import ingsis.snippet.errorDTO.Error;
 import ingsis.snippet.errorDTO.ErrorMessage;
 import ingsis.snippet.services.RestTemplateService;
@@ -85,6 +82,22 @@ public class PrintScriptServiceHandler {
     try {
       postRequest(printScriptWebClient, "/runner/test", requestPrintScript, Void.class);
       return Response.withData(null);
+    } catch (HttpClientErrorException e) {
+      return Response.withError(
+          new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
+    }
+  }
+
+  public Response<List<String>> executeSnippet(
+      String snippetId, String version, List<String> inputs, String token) {
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Authorization", token);
+    HttpEntity<RunSnippetData> requestPrintScript =
+        new HttpEntity<>(new RunSnippetData(snippetId, version, inputs), headers);
+    try {
+      List<String> output =
+          postRequest(printScriptWebClient, "/runner/execute", requestPrintScript, List.class);
+      return Response.withData(output);
     } catch (HttpClientErrorException e) {
       return Response.withError(
           new Error<>(e.getStatusCode().value(), e.getResponseBodyAsString()));
