@@ -153,7 +153,7 @@ public class SnippetController {
   }
 
   @GetMapping("/get/all")
-  public ResponseEntity<PaginationAndDetails> getAccessibleSnippets(
+  public ResponseEntity<Object> getAccessibleSnippets(
       @RequestHeader("Authorization") String token,
       @RequestParam(required = false) String relation,
       @RequestParam Integer page,
@@ -163,11 +163,11 @@ public class SnippetController {
         snippetService.getAccessibleSnippets(token, relation, page, pageSize, prefix);
 
     if (response.isError()) {
-      return new ResponseEntity<>(null, HttpStatusCode.valueOf(response.getError().code()));
+      return new ResponseEntity<>(
+          response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
     }
 
     PaginationAndDetails data = response.getData();
-    System.out.println(">> data en controller = " + data); // para ver que no sea null
     return new ResponseEntity<>(data, HttpStatus.OK);
   }
 
@@ -203,5 +203,16 @@ public class SnippetController {
     return ResponseEntity.ok()
         .header("Content-Disposition", "attachment; filename=" + response.getData().name())
         .body(response.getData().code());
+  }
+
+  @PostMapping("/run")
+  public ResponseEntity<Object> runSnippet(
+      @RequestBody RunSnippetDTO runSnippetDTO, @RequestHeader("Authorization") String token) {
+    Response<List<String>> response = snippetService.runSnippet(runSnippetDTO, token);
+    if (response.isError()) {
+      return new ResponseEntity<>(
+          response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+    }
+    return ResponseEntity.ok(response.getData());
   }
 }
