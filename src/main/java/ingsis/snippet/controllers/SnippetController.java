@@ -204,4 +204,15 @@ public class SnippetController {
         .header("Content-Disposition", "attachment; filename=" + response.getData().name())
         .body(response.getData().code());
   }
+
+  @GetMapping("/run")
+  public ResponseEntity<Object> runSnippet(
+      @RequestParam String snippetId, @RequestHeader("Authorization") String token) {
+    Response<String> response = snippetService.runSnippet(snippetId, token);
+    if (response.isError()) {
+      return new ResponseEntity<>(
+          response.getError().body(), HttpStatusCode.valueOf(response.getError().code()));
+    }
+    return ResponseEntity.ok(response.getData());
+  }
 }
